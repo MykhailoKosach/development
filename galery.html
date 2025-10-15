@@ -164,6 +164,25 @@
       .passport{ width: 96%; }
       .passport .meta{ grid-template-columns: 1fr; }
     }
+    @media (max-width: 600px){
+      /* Move arrows next to dots on mobile */
+      .arrow{
+        top: auto;
+        bottom: 0;
+        width: 40px;
+        height: 40px;
+      }
+      .arrow:active{ transform: scale(.96); }
+      .arrow.prev{ 
+        left: calc(50% - 70px);
+        transform: translateX(-100%);
+      }
+      .arrow.next{ 
+        right: calc(50% - 70px);
+        left: auto;
+        transform: translateX(100%);
+      }
+    }
   </style>
 </head>
 <body>
@@ -237,8 +256,8 @@
 
       if (w < 600){
         // --- Compact mobile layout: centered active with tiny side peeks + parallax ---
-        const peek = Math.max(6, Math.min(12, w * 0.02)); // only a few pixels
-        const activeW = Math.max(220, Math.min(w - 2 * peek, 520));
+        const peek = Math.max(20, Math.min(30, w * 0.06)); // 20-30px visible on sides
+        const activeW = Math.max(220, Math.min(w - 2 * peek, 500));
         const center = (w - activeW) / 2;
         const prevIdx = order[n - 1];
         const nextIdx = order[1];
