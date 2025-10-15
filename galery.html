@@ -186,36 +186,11 @@
 
   <script>
     const data = [
-      {
-        img: 'https://picsum.photos/id/1011/1600/1000',
-        name: 'Atria Tower', year: '1998', city: 'Rotterdam',
-        architect: 'MVRDV', height: '180 m', function: 'Mixed-use',
-        note: 'LEED Gold candidate'
-      },
-      {
-        img: 'https://picsum.photos/id/1003/1600/1000',
-        name: 'Harbor View', year: '2006', city: 'Copenhagen',
-        architect: 'BIG (Bjarke Ingels Group)', height: '92 m', function: 'Residential',
-        note: 'Green roof terraces'
-      },
-      {
-        img: 'https://picsum.photos/id/1005/1600/1000',
-        name: 'Glassworks 12', year: '2015', city: 'Dublin',
-        architect: 'RKD Architects', height: '64 m', function: 'Office',
-        note: 'Double-skin façade'
-      },
-      {
-        img: 'https://picsum.photos/id/1016/1600/1000',
-        name: 'Marina Gate', year: '2019', city: 'Dubai',
-        architect: 'AECOM', height: '206 m', function: 'Residential',
-        note: 'Podium retail'
-      },
-      {
-        img: 'https://picsum.photos/id/1025/1600/1000',
-        name: 'Cedar Court', year: '2022', city: 'Vancouver',
-        architect: 'Perkins&Will', height: '55 m', function: 'Timber hybrid',
-        note: 'Mass timber cores'
-      }
+      { img: 'https://picsum.photos/id/1011/1600/1000', name: 'Atria Tower', year: '1998', city: 'Rotterdam', architect: 'MVRDV', height: '180 m', function: 'Mixed-use', note: 'LEED Gold candidate' },
+      { img: 'https://picsum.photos/id/1003/1600/1000', name: 'Harbor View', year: '2006', city: 'Copenhagen', architect: 'BIG (Bjarke Ingels Group)', height: '92 m', function: 'Residential', note: 'Green roof terraces' },
+      { img: 'https://picsum.photos/id/1005/1600/1000', name: 'Glassworks 12', year: '2015', city: 'Dublin', architect: 'RKD Architects', height: '64 m', function: 'Office', note: 'Double-skin façade' },
+      { img: 'https://picsum.photos/id/1016/1600/1000', name: 'Marina Gate', year: '2019', city: 'Dubai', architect: 'AECOM', height: '206 m', function: 'Residential', note: 'Podium retail' },
+      { img: 'https://picsum.photos/id/1025/1600/1000', name: 'Cedar Court', year: '2022', city: 'Vancouver', architect: 'Perkins&Will', height: '55 m', function: 'Timber hybrid', note: 'Mass timber cores' }
     ];
 
     const gallery = document.getElementById('gallery');
@@ -253,14 +228,73 @@
 
     const slides = [...document.querySelectorAll('.slide')];
     let order = slides.map((_, i) => i); // infinite deck order; active is always order[0]
+    const parallax = { t: 0 }; // -0.5..0.5 range
 
     function layout(){
       const w = gallery.clientWidth;
       const n = slides.length;
       if (!n) return;
 
+      if (w < 600){
+        // --- Compact mobile layout: centered active with tiny side peeks + parallax ---
+        const peek = Math.max(6, Math.min(12, w * 0.02)); // only a few pixels
+        const activeW = Math.max(220, Math.min(w - 2 * peek, 520));
+        const center = (w - activeW) / 2;
+        const prevIdx = order[n - 1];
+        const nextIdx = order[1];
+
+        slides.forEach((el, i) => {
+          const pos = order.indexOf(i);
+          el.style.pointerEvents = 'none';
+          if (pos === 0){
+            // Active: perfectly centered; subtle parallax
+            const dx = parallax.t * 8;
+            el.style.left = `${center + dx}px`;
+            el.style.width = `${activeW}px`;
+            el.style.transform = 'scale(1)';
+            el.style.filter = 'grayscale(0) saturate(1)';
+            el.style.zIndex = 100;
+            el.style.opacity = 1;
+            el.style.pointerEvents = 'auto';
+          } else if (i === nextIdx){
+            // Next: tiny peek on the right, moves more for parallax
+            const dx = parallax.t * 18;
+            el.style.left = `${w - peek + dx}px`;
+            el.style.width = `${activeW}px`;
+            el.style.transform = 'scale(0.96)';
+            el.style.filter = 'grayscale(1) brightness(.84)';
+            el.style.zIndex = 90;
+            el.style.opacity = 1;
+            el.style.pointerEvents = 'auto';
+          } else if (i === prevIdx){
+            // Previous: tiny peek on the left
+            const dx = -parallax.t * 18;
+            el.style.left = `${-activeW + peek + dx}px`;
+            el.style.width = `${activeW}px`;
+            el.style.transform = 'scale(0.96)';
+            el.style.filter = 'grayscale(1) brightness(.84)';
+            el.style.zIndex = 90;
+            el.style.opacity = 1;
+            el.style.pointerEvents = 'auto';
+          } else {
+            // Hide all other cards in mobile mode
+            el.style.left = `${center}px`;
+            el.style.width = `${activeW}px`;
+            el.style.transform = 'scale(0.9)';
+            el.style.filter = 'grayscale(1) brightness(.6)';
+            el.style.zIndex = 1;
+            el.style.opacity = 0;
+          }
+        });
+
+        // Update dots by original index
+        [...dots.children].forEach((d, idx) => d.classList.toggle('active', order[0] === idx));
+        return; // --- end mobile branch ---
+      }
+
+      // --- Deck layout for >=600px ---
       // Responsive main card ratio (smaller on phones to fit full cascade)
-      let r = w <= 520 ? 0.62 : (w <= 900 ? 0.66 : 0.7);
+      let r = w <= 900 ? 0.66 : 0.7;
       let activeW = Math.min(Math.max(260, w * r), w - 12);
 
       // Where stacked cards begin behind the active's right edge
@@ -268,7 +302,7 @@
       let stackStart = activeW - peek;
 
       const nStack = Math.max(0, slides.length - 1);
-      // Tighter spacing on small screens
+      // Spacing
       let minStep = Math.max(12, Math.min(26, w * 0.03));
       let maxStep = Math.max(28, Math.min(56, w * 0.06));
       let minStackW = Math.max(140, Math.min(260, w * 0.28));
@@ -278,7 +312,6 @@
       s = Math.max(minStep, Math.min(maxStep, isFinite(s) ? s : maxStep));
       let stackW = w - stackStart - (nStack - 1) * s;
 
-      // If still too tight, shrink the active card a touch to make room
       if (stackW < minStackW) {
         const deficit = (minStackW - stackW);
         activeW = Math.max(220, activeW - deficit - 8);
@@ -288,12 +321,11 @@
         stackW = w - stackStart - (nStack - 1) * s;
       }
 
-      // Final clamps: keep stacked width reasonable versus the main card
       stackW = Math.max(minStackW, Math.min(stackW, Math.max(200, activeW * 0.9)));
 
-      // Apply positions
       slides.forEach((el, i) => {
         const pos = order.indexOf(i); // 0 is active, >=1 stacked
+        el.style.pointerEvents = 'auto';
         if (pos === 0){
           el.style.left = `0px`;
           el.style.width = `${activeW}px`;
@@ -314,7 +346,6 @@
         }
       });
 
-      // Update dots by original index
       [...dots.children].forEach((d, idx) => d.classList.toggle('active', order[0] === idx));
     }
 
@@ -352,8 +383,19 @@
       layout();
     }));
 
+    // Pointer-based parallax on mobile layout
+    gallery.addEventListener('pointermove', (e) => {
+      const w = gallery.clientWidth;
+      if (w >= 600) return; // only on mobile layout
+      const rect = gallery.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / Math.max(1, w);
+      parallax.t = Math.max(-0.5, Math.min(0.5, x - 0.5));
+      layout();
+    });
+    gallery.addEventListener('pointerleave', () => { parallax.t = 0; layout(); });
+
     // Resize throttle
-    let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(layout, 80); });
+    let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { parallax.t = 0; layout(); }, 80); });
 
     // Initial
     layout();
