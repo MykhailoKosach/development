@@ -155,7 +155,7 @@ if (contactForm) {
 (function () {
   const data = [
     {
-      img: "media/zymna-voda.jpg", // TODO: replace with real image path
+      img: "https://picsum.photos/id/1011/1600/1000", // TODO: replace with real image path
       name: "Зимна Вода",
       short: "Складський комплекс класу А+ площею 116 000 м² на Кільцевій дорозі Львова.",
       area: "116 000 м²",
@@ -165,7 +165,7 @@ if (contactForm) {
       link: "zymna-voda.html"
     },
     {
-      img: "media/pidriasne.jpg",
+      img: "https://picsum.photos/id/1003/1600/1000",
       name: "Підрясне",
       short: "Сучасний комплекс класу A, переобладнаний під виробничі потреби, 41 000 м².",
       area: "41 000 м²",
@@ -175,7 +175,7 @@ if (contactForm) {
       link: "pidriasne.html"
     },
     {
-      img: "media/riasne.jpg",
+      img: "https://picsum.photos/id/1005/1600/1000",
       name: "Рясне",
       short: "Складський комплекс класу B+ площею 7 235,6 м² із сучасною інженерією.",
       area: "7 235,6 м²",
@@ -185,7 +185,7 @@ if (contactForm) {
       link: "riasne.html"
     },
     {
-      img: "media/drohobych.jpg",
+      img: "https://picsum.photos/id/1016/1600/1000",
       name: "Дрогобич",
       short: "Промисловий об’єкт у стратегічній локації з потенціалом розвитку логістики.",
       area: "—",
