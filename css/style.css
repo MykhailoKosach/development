@@ -782,3 +782,237 @@ a {
     min-height: 88vh;
   }
 }
+
+
+/* ================================
+   PROTEC-GROUP STYLE OVERRIDES
+   Paste this at the END of style.css
+   ================================ */
+
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f4f5f7;
+  --text: #171923;
+  --muted: #6b7280;
+  --accent: #e32225;       /* brand red */
+  --accent-soft: #ff6669;
+  --border: #e2e4ea;
+  --card: #ffffff;
+  --shadow-soft: 0 16px 40px rgba(15, 23, 42, 0.12);
+}
+
+/* GLOBAL */
+
+html,
+body {
+  background: #f4f5f7;
+  color: var(--text);
+}
+
+/* HEADER */
+
+.site-header {
+  background: #ffffff;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(226, 228, 234, 0.9);
+}
+
+.main-nav a {
+  color: #111827;
+}
+
+.main-nav a::after {
+  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+}
+
+/* MOBILE NAV */
+
+.mobile-nav {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* HERO */
+
+.hero {
+  background: #ffffff;
+}
+
+.hero-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.96),
+    rgba(244, 245, 247, 0.96)
+  );
+}
+
+.hero-text h1 {
+  color: #111827;
+}
+
+.hero-text p {
+  color: var(--muted);
+}
+
+/* MAP CARD */
+
+.map-placeholder {
+  background: radial-gradient(circle at 20% 0, #e5e7eb, #f9fafb 55%, #ffffff 100%);
+  border-color: #e5e7eb;
+}
+
+.map-point {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #e5e7eb;
+  color: #111827;
+}
+
+.map-point:hover {
+  background: var(--accent);
+  border-color: #fee2e2;
+  color: #ffffff;
+}
+
+.map-popup {
+  background: linear-gradient(135deg, #111827, #1f2937);
+  border-radius: 16px;
+}
+
+/* SECTIONS */
+
+.section {
+  background: #ffffff;
+}
+
+.section-dark {
+  background: #f4f5f7;
+}
+
+/* WHY BLOCKS */
+
+.why-item {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.12);
+}
+
+.why-icon {
+  background: rgba(227, 34, 37, 0.1);
+  color: var(--accent);
+}
+
+/* SERVICES LINE */
+
+.services-point {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+  color: #111827;
+}
+
+.services-point.active {
+  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+  border-color: rgba(248, 250, 252, 0.7);
+  color: #ffffff;
+}
+
+.services-line-bar {
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.4), transparent);
+}
+
+/* EXTRA SERVICES CARDS */
+
+.extra-card {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
+.extra-card:hover {
+  border-color: rgba(227, 34, 37, 0.6);
+}
+
+/* PROJECTS */
+
+.projects-track {
+  background: transparent;
+}
+
+.project-card {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+}
+
+/* ABOUT */
+
+.about-step {
+  background: #ffffff;
+  border-color: #e5e7eb;
+}
+
+.about-step.visible {
+  border-color: rgba(227, 34, 37, 0.7);
+}
+
+/* CONTACTS */
+
+.map-embed-placeholder {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+  color: var(--muted);
+}
+
+.contact-form {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+}
+
+.contact-form input,
+.contact-form textarea {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+  color: #111827;
+}
+
+/* BUTTONS */
+
+.btn {
+  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+  box-shadow: 0 10px 24px rgba(227, 34, 37, 0.35);
+}
+
+.btn-outline {
+  border-color: #e11d22;
+  color: #b91c1c;
+}
+
+/* FOOTER */
+
+.site-footer {
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  color: var(--muted);
+}
+
+/* PROJECT PAGES */
+
+.project-body-page {
+  background: #f4f5f7;
+}
+
+.project-hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(17, 24, 39, 0.25),
+    rgba(17, 24, 39, 0.92)
+  );
+}
+
+/* Slider arrows: lighter look on white */
+
+.slider-arrow {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  color: #111827;
+}
