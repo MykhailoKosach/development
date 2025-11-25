@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <title>ProTec Development</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo">ProTec <span>Development</span></div>
+      <nav class="main-nav">
+        <a href="#about">Про нас</a>
+        <a href="#why">Чому ми</a>
+        <a href="#projects">Наші проєкти</a>
+        <a href="#contacts">Контакти</a>
+      </nav>
+      <button class="burger" id="burgerBtn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="#about">Про нас</a>
+    <a href="#why">Чому ми</a>
+    <a href="#projects">Наші проєкти</a>
+    <a href="#contacts">Контакти</a>
+  </nav>
+
+  <main>
+    <!-- HERO: VIDEO + MAP -->
+    <section class="hero">
+      <video class="hero-video" autoplay muted loop playsinline>
+        <!-- Replace src with real video -->
+        <source src="media/hero-placeholder.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="container hero-content">
+        <div class="hero-text">
+          <h1>Склади класу A/A+ у ключових локаціях Львівського регіону</h1>
+          <p>Від ідеї до експлуатації — повний цикл девелопменту промислової нерухомості.</p>
+        </div>
+
+        <div class="hero-map">
+          <div class="map-placeholder">
+            <!-- Simple “map” mock with clickable points -->
+            <div class="map-point" data-location="riasne" style="top: 35%; left: 35%;">Рясне</div>
+            <div class="map-point" data-location="pidriasne" style="top: 45%; left: 60%;">Підрясне</div>
+            <div class="map-point" data-location="zymna" style="top: 50%; left: 40%;">Зимна Вода</div>
+            <div class="map-point" data-location="drohobych" style="top: 70%; left: 25%;">Дрогобич</div>
+
+            <div class="map-popup" id="mapPopup">
+              <button class="map-popup-close" id="mapPopupClose" aria-label="Close popup">×</button>
+              <div class="map-popup-content">
+                <h3 id="mapPopupTitle"></h3>
+                <p id="mapPopupText"></p>
+                <a id="mapPopupLink" href="#" class="btn btn-small">Детальніше</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY PROTEC -->
+    <section class="section" id="why">
+      <div class="container why-grid">
+        <div class="why-title">
+          <h2>Чому ProTec Development</h2>
+          <p>Склади та промислові об’єкти, які працюють під ваш бізнес.</p>
+        </div>
+        <div class="why-items">
+          <article class="why-item">
+            <div class="why-icon">A+</div>
+            <h3>Високий клас складів</h3>
+            <p>Об’єкти класу А та А+: сухі та мультитемпературні складські приміщення, зручне сполучення з кордоном.</p>
+          </article>
+
+          <article class="why-item">
+            <div class="why-icon">27</div>
+            <h3>27 років досвіду</h3>
+            <p>Понад 300 000 м² промислових площ для логістики, виробництва та торгівлі.</p>
+          </article>
+
+          <article class="why-item">
+            <div class="why-icon">Land</div>
+            <h3>Власний банк землі</h3>
+            <p>Земельні ділянки у ключових локаціях Львівського регіону з потенціалом понад 100 000 м² нових площ.</p>
+          </article>
+
+          <article class="why-item">
+            <div class="why-icon">360°</div>
+            <h3>Комплексність та персоналізація</h3>
+            <p>Від ідеї й концепції до будівництва та управління, з урахуванням особливостей вашого бізнесу.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES LINE -->
+    <section class="section section-dark" id="services">
+      <div class="container">
+        <h2>Наші послуги</h2>
+
+        <div class="services-line">
+          <div class="services-line-track">
+            <button class="services-point active" data-service="idea">Ідея</button>
+            <button class="services-point" data-service="concept">Розробка концепції</button>
+            <button class="services-point" data-service="land">Пошук ділянки</button>
+            <button class="services-point" data-service="design">Дизайн проєкту</button>
+            <button class="services-point" data-service="build">Будівництво</button>
+            <button class="services-point" data-service="operation">Експлуатація</button>
+          </div>
+          <div class="services-line-bar"></div>
+        </div>
+
+        <div class="services-content">
+          <article class="service-detail active" data-service-detail="idea">
+            <h3>Ідея</h3>
+            <p>Ми допомагаємо перетворити вашу ідею у бізнес-концепцію: від бачення об’єкта до його функціонального призначення.</p>
+          </article>
+
+          <article class="service-detail" data-service-detail="concept">
+            <h3>Розробка концепції</h3>
+            <p>Навіть якщо компанія не має чіткого розуміння процесів і потреб у площі, ми аналізуємо бізнес-модель та створюємо концепцію будівлі, що підтримає масштабування бізнесу.</p>
+          </article>
+
+          <article class="service-detail" data-service-detail="land">
+            <h3>Пошук ділянки</h3>
+            <p>Підбираємо локацію з урахуванням логістики, інфраструктури та потенціалу розвитку вашого бізнесу.</p>
+          </article>
+
+          <article class="service-detail" data-service-detail="design">
+            <h3>Дизайн проєкту</h3>
+            <p>Створюємо дизайн та повний комплекс проєктно-технічної документації з фокусом на функціональність, сучасний вигляд та інноваційні рішення.</p>
+          </article>
+
+          <article class="service-detail" data-service-detail="build">
+            <h3>Будівництво</h3>
+            <p>Беремо на себе повний цикл будівництва — від дозвільної документації до введення в експлуатацію з технічним та авторським наглядом.</p>
+          </article>
+
+          <article class="service-detail" data-service-detail="operation">
+            <h3>Експлуатація</h3>
+            <p>Забезпечуємо професійне управління об’єктом: оренда, експлуатація та стабільна зростаюча дохідність.</p>
+          </article>
+        </div>
+
+        <!-- EXTRA SERVICES -->
+        <div class="extra-services">
+          <h3>Додаткові послуги</h3>
+          <div class="extra-services-grid">
+            <a class="extra-card" href="https://protec-group.example" target="_blank" rel="noopener noreferrer">
+              <h4>Складська логістика</h4>
+              <p>Комплексні рішення для управління складськими потоками.</p>
+              <span class="extra-link">Дізнатися більше</span>
+            </a>
+            <a class="extra-card" href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
+              <h4>Консалтинг</h4>
+              <p>Професійні поради щодо розвитку інфраструктури та логістики.</p>
+              <span class="extra-link">Дізнатися більше</span>
+            </a>
+            <a class="extra-card" href="https://overtrans.example" target="_blank" rel="noopener noreferrer">
+              <h4>Міжнародна транспортна логістика</h4>
+              <p>Міжнародні перевезення та інтеграція з вашими складськими рішеннями.</p>
+              <span class="extra-link">Дізнатися більше</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS SLIDER -->
+    <section class="section" id="projects">
+      <div class="container">
+        <div class="section-header-row">
+          <h2>Реалізовані проєкти</h2>
+        </div>
+
+        <div class="projects-slider">
+          <button class="slider-arrow" id="projectsPrev" aria-label="Previous">‹</button>
+
+          <div class="projects-track" id="projectsTrack">
+            <!-- Zymna Voda -->
+            <article class="project-card">
+              <div class="project-image project-image-1"></div>
+              <div class="project-body">
+                <h3>Зимна Вода</h3>
+                <p>Складський комплекс класу А+ площею 116 000 м² у зручній локації на Кільцевій дорозі Львова.</p>
+                <a href="zymna-voda.html" class="btn btn-small">Детальніше</a>
+              </div>
+            </article>
+
+            <!-- Pidriasne -->
+            <article class="project-card">
+              <div class="project-image project-image-2"></div>
+              <div class="project-body">
+                <h3>Підрясне</h3>
+                <p>Сучасний комплекс класу A, переобладнаний під виробничі потреби, площею 41 000 м².</p>
+                <a href="pidriasne.html" class="btn btn-small">Детальніше</a>
+              </div>
+            </article>
+
+            <!-- Riasne -->
+            <article class="project-card">
+              <div class="project-image project-image-3"></div>
+              <div class="project-body">
+                <h3>Рясне</h3>
+                <p>Складський комплекс класу B+ площею 7 200 м² із сучасною інженерією та продуманою логістикою.</p>
+                <a href="riasne.html" class="btn btn-small">Детальніше</a>
+              </div>
+            </article>
+
+            <!-- Drohobych (placeholder text) -->
+            <article class="project-card">
+              <div class="project-image project-image-4"></div>
+              <div class="project-body">
+                <h3>Дрогобич</h3>
+                <p>Складський комплекс у стратегічній локації з потенціалом для розвитку логістичних рішень.</p>
+                <a href="#" class="btn btn-small disabled">Скоро</a>
+              </div>
+            </article>
+          </div>
+
+          <button class="slider-arrow" id="projectsNext" aria-label="Next">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT US -->
+    <section class="section section-dark" id="about">
+      <div class="container about-layout">
+        <div class="about-main">
+          <h2>Ми будуємо більше ніж склади, ми будуємо можливості</h2>
+          <p class="about-lead">
+            Інфраструктура, яка дозволяє бізнесу зростати, а логістиці — працювати безперебійно.
+          </p>
+        </div>
+
+        <div class="about-steps">
+          <article class="about-step visible" data-about-step>
+            <h3>Ми</h3>
+            <p>Команда ProTec Development: архітектори, інженери, проєктувальники, девелопери, менеджери з експлуатації. Повний цикл — від ідеї до управління об’єктом.</p>
+          </article>
+
+          <article class="about-step" data-about-step>
+            <h3>Будуємо</h3>
+            <p>Не лише про фізичне зведення. Це концепція, індивідуальний проєкт, економічне планування, контроль якості та сучасні технології.</p>
+          </article>
+
+          <article class="about-step" data-about-step>
+            <h3>Більше ніж склади</h3>
+            <p>Комплексні об’єкти: A/A+ склади, холодильні та морозильні приміщення, офіси — простір для логістики, роботи та масштабування бізнесу.</p>
+          </article>
+
+          <article class="about-step" data-about-step>
+            <h3>Ми будуємо можливості</h3>
+            <p>Інвестиційні моделі — будівництво під запит, викуп чи управління. Ми беремо на себе інфраструктуру, щоб ви зосередилися на бізнесі.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACTS -->
+    <section class="section" id="contacts">
+      <div class="container contacts-grid">
+        <div>
+          <h2>Контакти</h2>
+          <p>Зв’яжіться з нами, щоб обговорити ваш проєкт або запит щодо складів.</p>
+
+          <ul class="contact-list">
+            <li><strong>Телефон:</strong> +380 XX XXX XX XX</li>
+            <li><strong>Email:</strong> info@protec-development.ua</li>
+            <li><strong>Адреса:</strong> Львів, Україна</li>
+          </ul>
+
+          <div class="map-embed-placeholder">
+            Тут може бути інтегрована Google/Mapbox карта.
+          </div>
+        </div>
+
+        <form class="contact-form">
+          <h3>Напишіть нам</h3>
+          <label>
+            Ім’я
+            <input type="text" name="name" required />
+          </label>
+          <label>
+            Телефон
+            <input type="tel" name="phone" required />
+          </label>
+          <label>
+            Повідомлення
+            <textarea name="message" rows="4" required></textarea>
+          </label>
+          <button type="submit" class="btn">Надіслати</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> ProTec Development</span>
+      <span>Створено з фокусом на промислові рішення</span>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
