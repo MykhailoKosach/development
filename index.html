@@ -9,19 +9,39 @@
 <body>
   <!-- HEADER -->
   <header class="site-header">
-    <div class="container header-inner">
-      <div class="logo">ProTec <span>Development</span></div>
-      <nav class="main-nav">
-        <a href="#about">Про нас</a>
-        <a href="#why">Чому ми</a>
-        <a href="#projects">Наші проєкти</a>
-        <a href="#contacts">Контакти</a>
-      </nav>
-      <button class="burger" id="burgerBtn" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
+  <div class="container header-inner">
+    <div class="logo">ProTec <span>Development</span></div>
+
+    <div class="header-right">
+      <!-- TOP ROW: phone + language toggle -->
+      <div class="header-top-row">
+        <a class="header-phone" href="tel:+380XXXXXXXXX">
+          +380 XX XXX XX XX
+        </a>
+
+        <div class="lang-toggle" aria-label="Change language">
+          <button type="button" class="lang-btn active" data-lang="ua">UA</button>
+          <button type="button" class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW: nav + burger -->
+      <div class="header-bottom-row">
+        <nav class="main-nav">
+          <a href="#about">Про нас</a>
+          <a href="#why">Чому ми</a>
+          <a href="#projects">Наші проєкти</a>
+          <a href="#contacts">Контакти</a>
+        </nav>
+
+        <button class="burger" id="burgerBtn" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
-  </header>
+  </div>
+</header>
+
 
   <!-- MOBILE NAV -->
   <nav class="mobile-nav" id="mobileNav">
@@ -176,60 +196,40 @@
 
     <!-- PROJECTS SLIDER -->
     <section class="section" id="projects">
-      <div class="container">
-        <div class="section-header-row">
-          <h2>Реалізовані проєкти</h2>
-        </div>
-
-        <div class="projects-slider">
-          <button class="slider-arrow" id="projectsPrev" aria-label="Previous">‹</button>
-
-          <div class="projects-track" id="projectsTrack">
-            <!-- Zymna Voda -->
-            <article class="project-card">
-              <div class="project-image project-image-1"></div>
-              <div class="project-body">
-                <h3>Зимна Вода</h3>
-                <p>Складський комплекс класу А+ площею 116 000 м² у зручній локації на Кільцевій дорозі Львова.</p>
-                <a href="zymna-voda.html" class="btn btn-small">Детальніше</a>
-              </div>
-            </article>
-
-            <!-- Pidriasne -->
-            <article class="project-card">
-              <div class="project-image project-image-2"></div>
-              <div class="project-body">
-                <h3>Підрясне</h3>
-                <p>Сучасний комплекс класу A, переобладнаний під виробничі потреби, площею 41 000 м².</p>
-                <a href="pidriasne.html" class="btn btn-small">Детальніше</a>
-              </div>
-            </article>
-
-            <!-- Riasne -->
-            <article class="project-card">
-              <div class="project-image project-image-3"></div>
-              <div class="project-body">
-                <h3>Рясне</h3>
-                <p>Складський комплекс класу B+ площею 7 200 м² із сучасною інженерією та продуманою логістикою.</p>
-                <a href="riasne.html" class="btn btn-small">Детальніше</a>
-              </div>
-            </article>
-
-            <!-- Drohobych (placeholder text) -->
-            <article class="project-card">
-              <div class="project-image project-image-4"></div>
-              <div class="project-body">
-                <h3>Дрогобич</h3>
-                <p>Складський комплекс у стратегічній локації з потенціалом для розвитку логістичних рішень.</p>
-                <a href="#" class="btn btn-small disabled">Скоро</a>
-              </div>
-            </article>
-          </div>
-
-          <button class="slider-arrow" id="projectsNext" aria-label="Next">›</button>
-        </div>
+  <div class="container">
+    <div class="section-header-row">
+      <div>
+        <h2>Реалізовані проєкти</h2>
+        <p>Складські та промислові комплекси у ключових локаціях Львівського регіону.</p>
       </div>
-    </section>
+    </div>
+  </div>
+
+  <div class="projects-gallery-wrap">
+    <!-- Arrows are outside the main gallery container -->
+    <button class="projects-arrow prev" aria-label="Попередній проєкт" title="Попередній" data-dir="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+      </svg>
+    </button>
+
+    <div class="projects-gallery"
+         id="projectsGallery"
+         aria-roledescription="carousel"
+         aria-label="Реалізовані проєкти">
+      <!-- Slides injected by JS -->
+    </div>
+
+    <button class="projects-arrow next" aria-label="Наступний проєкт" title="Наступний" data-dir="1">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8.59 16.59 10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+      </svg>
+    </button>
+
+    <div class="projects-dots" id="projectsDots" aria-hidden="true"></div>
+  </div>
+</section>
+
 
     <!-- ABOUT US -->
     <section class="section section-dark" id="about">
