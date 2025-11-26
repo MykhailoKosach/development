@@ -60,15 +60,16 @@ a {
   display: flex;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(16px);
-  background: linear-gradient(to bottom, rgba(5, 6, 8, 0.95), rgba(5, 6, 8, 0.8), transparent);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 24px;
 }
 
 .logo {
@@ -76,12 +77,14 @@ a {
   font-size: 1.1rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  color: #111827;
 }
 
 .logo span {
   color: var(--accent);
 }
 
+/* MAIN NAV (desktop) */
 .main-nav {
   display: flex;
   gap: 24px;
@@ -91,6 +94,7 @@ a {
 .main-nav a {
   position: relative;
   padding-bottom: 4px;
+  color: #111827;
 }
 
 .main-nav a::after {
@@ -108,9 +112,9 @@ a {
   width: 100%;
 }
 
-/* BURGER */
+/* BURGER (base) */
 .burger {
-  display: none;
+  display: none; /* hidden on desktop, shown via media query */
   flex-direction: column;
   justify-content: center;
   gap: 5px;
@@ -120,55 +124,39 @@ a {
   border: none;
   padding: 0;
   cursor: pointer;
+  position: relative;
 }
 
 .burger span {
   display: block;
+  width: 100%;
   height: 2px;
   border-radius: 999px;
-  background: #ffffff;
+  background: #111827;
+  transition: transform 0.18s ease-out, opacity 0.18s ease-out;
 }
 
-/* MOBILE NAV */
-.mobile-nav {
-  position: fixed;
-  top: 72px;
-  left: 0;
-  right: 0;
-  background: rgba(5, 6, 8, 0.98);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  display: none;
-  flex-direction: column;
-  padding: 8px 16px 16px;
-  gap: 8px;
-  z-index: 999;
+/* Burger open/close animation */
+.burger.is-open span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
 }
 
-.mobile-nav.open {
-  display: flex;
+.burger.is-open span:nth-child(2) {
+  opacity: 0;
 }
 
-.mobile-nav a {
-  padding: 8px 0;
+.burger.is-open span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
-/* HEADER LAYOUT WITH TWO ROWS ON THE RIGHT */
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-}
-
+/* HEADER LAYOUT WITH TWO ROWS ON THE RIGHT (desktop) */
 .header-right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 10px;          /* was 4px – more space between top/bottom rows */
+  gap: 10px;
   flex: 1;
 }
-
 
 .header-top-row {
   display: flex;
@@ -186,7 +174,6 @@ a {
 }
 
 /* Phone link */
-
 .header-phone {
   color: #111827;
   font-weight: 600;
@@ -203,8 +190,7 @@ a {
   color: var(--accent);
 }
 
-/* Language toggle – “nice red style” */
-
+/* Language toggle – red pill */
 .lang-toggle {
   display: inline-flex;
   align-items: center;
@@ -232,37 +218,117 @@ a {
   color: #ffffff;
 }
 
-/* Make sure burger/nav work with new structure */
-
+/* Ensure desktop nav shows in bottom row */
 .header-bottom-row .main-nav {
   display: flex;
   gap: 24px;
 }
 
-/* MOBILE: stack layout a bit cleaner */
-
+/* ========= MOBILE LAYOUT (<=720px) ========= */
 @media (max-width: 720px) {
+  /* Hide top row (phone/lang) and desktop nav on mobile */
+  .header-top-row {
+    display: none;
+  }
+
+  .header-bottom-row .main-nav {
+    display: none;
+  }
+
+  /* Keep header layout simple: logo + burger */
   .header-right {
+    flex: 0;
     align-items: flex-end;
   }
 
-  .header-top-row {
-    font-size: 0.75rem;
+  .burger {
+    display: flex;
+    margin-left: 12px;
+  }
+}
+
+/* ========= MOBILE NAV DRAWER ========= */
+
+/* Hidden on desktop */
+.mobile-nav {
+  display: none;
+}
+
+/* Drawer on mobile only */
+@media (max-width: 720px) {
+  .mobile-nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 82%;
+    background: #ffffff;
+    border-left: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    z-index: 999;
+    transform: translateX(100%);
+    transition: transform 0.25s ease-out;
+  }
+
+  .mobile-nav.open {
+    transform: translateX(0);
+  }
+
+  .mobile-nav-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 80px 20px 24px; /* space for header + content */
+    gap: 24px;
+  }
+
+  .mobile-nav-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .mobile-nav-links {
+    display: flex;
+    flex-direction: column;
     gap: 12px;
   }
 
-  .header-bottom-row {
-    justify-content: flex-end;
+  .mobile-nav-links a {
+    padding: 10px 0;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #111827;
+    font-weight: 500;
   }
 
-  .main-nav {
-    display: none; /* already existed */
-  }
-
-  .burger {
-    display: flex; /* already existed */
+  .mobile-nav-links a:last-child {
+    border-bottom: none;
   }
 }
+
+/* Drawer backdrop */
+.mobile-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-out;
+  z-index: 998;
+}
+
+.mobile-nav-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 
 
 /* HERO */

@@ -13,7 +13,7 @@
     <div class="logo">ProTec <span>Development</span></div>
 
     <div class="header-right">
-      <!-- TOP ROW: phone + language toggle -->
+      <!-- TOP ROW: phone + language (desktop only) -->
       <div class="header-top-row">
         <a class="header-phone" href="tel:+380XXXXXXXXX">
           +380 XX XXX XX XX
@@ -42,14 +42,32 @@
   </div>
 </header>
 
+<!-- MOBILE NAV -->
 
-  <!-- MOBILE NAV -->
-  <nav class="mobile-nav" id="mobileNav">
-    <a href="#about">Про нас</a>
-    <a href="#why">Чому ми</a>
-    <a href="#projects">Наші проєкти</a>
-    <a href="#contacts">Контакти</a>
-  </nav>
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <a class="header-phone" href="tel:+380XXXXXXXXX">
+        +380 XX XXX XX XX
+      </a>
+
+      <div class="lang-toggle" aria-label="Change language">
+        <button type="button" class="lang-btn active" data-lang="ua">UA</button>
+        <button type="button" class="lang-btn" data-lang="en">EN</button>
+      </div>
+    </div>
+
+    <div class="mobile-nav-links">
+      <a href="#about">Про нас</a>
+      <a href="#why">Чому ми</a>
+      <a href="#projects">Наші проєкти</a>
+      <a href="#contacts">Контакти</a>
+    </div>
+  </div>
+</nav>
+  
+<!-- Drawer backdrop for mobile nav -->
+ <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
 
   <main>
     <!-- HERO: VIDEO + MAP -->

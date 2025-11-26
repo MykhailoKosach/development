@@ -1,16 +1,34 @@
-// MOBILE NAV
+// MOBILE NAV DRAWER
 const burgerBtn = document.getElementById("burgerBtn");
 const mobileNav = document.getElementById("mobileNav");
+const mobileNavBackdrop = document.getElementById("mobileNavBackdrop");
 
 if (burgerBtn && mobileNav) {
-  burgerBtn.addEventListener("click", () => {
-    mobileNav.classList.toggle("open");
-  });
+  const toggleMobileNav = () => {
+    const isOpen = mobileNav.classList.toggle("open");
+    if (mobileNavBackdrop) {
+      mobileNavBackdrop.classList.toggle("open", isOpen);
+    }
+    burgerBtn.classList.toggle("is-open", isOpen);
+  };
+
+  burgerBtn.addEventListener("click", toggleMobileNav);
+
+  if (mobileNavBackdrop) {
+    mobileNavBackdrop.addEventListener("click", toggleMobileNav);
+  }
 
   mobileNav.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => mobileNav.classList.remove("open"));
+    link.addEventListener("click", () => {
+      mobileNav.classList.remove("open");
+      burgerBtn.classList.remove("is-open");
+      if (mobileNavBackdrop) {
+        mobileNavBackdrop.classList.remove("open");
+      }
+    });
   });
 }
+
 
 // YEAR IN FOOTER
 const yearSpan = document.getElementById("year");
