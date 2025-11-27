@@ -131,6 +131,51 @@ if (projectsTrack && projectsPrev && projectsNext) {
       behavior: "smooth",
     });
   });
+
+  // SWIPE FUNCTIONALITY
+  let touchStartX = 0;
+  let touchEndX = 0;
+  let isDragging = false;
+
+  projectsTrack.addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    isDragging = true;
+  }, { passive: true });
+
+  projectsTrack.addEventListener("touchmove", (e) => {
+    if (!isDragging) return;
+    touchEndX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  projectsTrack.addEventListener("touchend", () => {
+    if (!isDragging) return;
+    isDragging = false;
+    handleSwipe();
+  });
+
+  function handleSwipe() {
+    const swipeThreshold = 50;
+    const diff = touchStartX - touchEndX;
+
+    if (Math.abs(diff) > swipeThreshold) {
+      if (diff > 0) {
+        // Swipe left - scroll right
+        projectsTrack.scrollBy({
+          left: scrollAmount,
+          behavior: "smooth",
+        });
+      } else {
+        // Swipe right - scroll left
+        projectsTrack.scrollBy({
+          left: -scrollAmount,
+          behavior: "smooth",
+        });
+      }
+    }
+
+    touchStartX = 0;
+    touchEndX = 0;
+  }
 }
 
 // ABOUT STEPS SCROLL VISIBILITY (only one highlighted)
@@ -237,14 +282,20 @@ if (contactForm) {
             <div><strong>Клас:</strong> ${p.cls}</div>
             <div><strong>Локація:</strong> ${p.location}</div>
           </div>
-          <span class="tag" aria-hidden="true">Реалізований проєкт</span>
+          <span class="tag project-tag" aria-hidden="true">Реалізований проєкт</span>
         </div>
       </div>`;
-    card.addEventListener("click", () => {
-      if (p.link && p.link !== "#") {
+    
+    // Add click only to the tag button
+    const tag = card.querySelector('.project-tag');
+    if (tag && p.link && p.link !== "#") {
+      tag.style.cursor = 'pointer';
+      tag.addEventListener("click", (e) => {
+        e.stopPropagation();
         window.location.href = p.link;
-      }
-    });
+      });
+    }
+    
     gallery.appendChild(card);
 
     const d = document.createElement("span");
@@ -403,6 +454,53 @@ if (contactForm) {
       layout();
     })
   );
+
+  // Touch swipe controls
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchEndX = 0;
+  let touchEndY = 0;
+  let isSwiping = false;
+
+  gallery.addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+    isSwiping = true;
+  }, { passive: true });
+
+  gallery.addEventListener("touchmove", (e) => {
+    if (!isSwiping) return;
+    touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  gallery.addEventListener("touchend", () => {
+    if (!isSwiping) return;
+    isSwiping = false;
+    handleSwipe();
+  });
+
+  function handleSwipe() {
+    const swipeThreshold = 50;
+    const diffX = touchStartX - touchEndX;
+    const diffY = Math.abs(touchStartY - touchEndY);
+
+    // Only process horizontal swipes (ignore vertical scrolling)
+    if (Math.abs(diffX) > swipeThreshold && diffY < swipeThreshold) {
+      if (diffX > 0) {
+        // Swipe left - next slide
+        move(1);
+      } else {
+        // Swipe right - previous slide
+        move(-1);
+      }
+    }
+
+    touchStartX = 0;
+    touchStartY = 0;
+    touchEndX = 0;
+    touchEndY = 0;
+  }
 
   // Pointer-based parallax (mobile only)
   gallery.addEventListener("pointermove", (e) => {
