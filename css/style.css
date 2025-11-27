@@ -876,6 +876,59 @@ a {
   border-color: rgba(214, 40, 40, 0.7);
 }
 
+/* WHY section: sticky stacked cards on scroll */
+#why .about-layout {
+  align-items: flex-start;
+}
+
+#why .about-steps {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* a bit of extra space so the last card can scroll fully */
+  padding-bottom: 120px;
+}
+
+/* base style for WHY cards: fully visible, no fade */
+#why .about-step {
+  opacity: 1;
+  transform: none;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  border-color: #e5e7eb;
+  position: sticky;
+  /* top offset = header height + breathing */
+  top: 96px; /* tweak if needed (72px header + ~24px) */
+}
+
+/* give each card higher z-index so lower ones stack on top */
+#why .about-step:nth-child(1) { z-index: 1; }
+#why .about-step:nth-child(2) { z-index: 2; }
+#why .about-step:nth-child(3) { z-index: 3; }
+#why .about-step:nth-child(4) { z-index: 4; }
+
+/* optional: slightly highlight the top-most one with hover */
+#why .about-step:hover {
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+  border-color: rgba(227, 34, 37, 0.7);
+}
+
+/* WHY: keep header + description sticky as well */
+#why .about-main {
+  position: sticky;
+  top: 96px;            /* same as cards (or tweak for taste) */
+  align-self: flex-start;
+}
+
+
+/* Mobile: smaller top offset so cards aren't too low */
+@media (max-width: 720px) {
+  #why .about-step {
+    top: 80px;
+  }
+}
+
+
 /* CONTACTS */
 .contacts-grid {
   display: grid;

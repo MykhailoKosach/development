@@ -179,7 +179,11 @@ if (projectsTrack && projectsPrev && projectsNext) {
 }
 
 // ABOUT STEPS SCROLL VISIBILITY (only one highlighted)
-const aboutSteps = document.querySelectorAll("[data-about-step]");
+// ABOUT STEPS SCROLL VISIBILITY (only for #about section)
+const aboutSection = document.getElementById("about");
+const aboutSteps = aboutSection
+  ? aboutSection.querySelectorAll("[data-about-step]")
+  : [];
 
 if (aboutSteps.length) {
   const observer = new IntersectionObserver(
@@ -200,6 +204,8 @@ if (aboutSteps.length) {
 
   aboutSteps.forEach((step) => observer.observe(step));
 }
+
+
 
 // SIMPLE FORM HANDLER (no backend)
 const contactForm = document.querySelector(".contact-form");
