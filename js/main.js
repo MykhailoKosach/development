@@ -178,35 +178,6 @@ if (projectsTrack && projectsPrev && projectsNext) {
   }
 }
 
-// ABOUT STEPS SCROLL VISIBILITY (only one highlighted)
-// ABOUT STEPS SCROLL VISIBILITY (only for #about section)
-const aboutSection = document.getElementById("about");
-const aboutSteps = aboutSection
-  ? aboutSection.querySelectorAll("[data-about-step]")
-  : [];
-
-if (aboutSteps.length) {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      let visibleEntry = null;
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          visibleEntry = entry;
-        }
-      });
-      if (visibleEntry) {
-        aboutSteps.forEach((step) => step.classList.remove("visible"));
-        visibleEntry.target.classList.add("visible");
-      }
-    },
-    { rootMargin: "-40% 0px -40% 0px", threshold: 0.1 }
-  );
-
-  aboutSteps.forEach((step) => observer.observe(step));
-}
-
-
-
 // SIMPLE FORM HANDLER (no backend)
 const contactForm = document.querySelector(".contact-form");
 if (contactForm) {
@@ -549,3 +520,182 @@ if (langButtons.length) {
     });
   });
 }
+
+// ================================
+// ABOUT SECTION - MISSION SCROLLER
+// ================================
+(function() {
+  const aboutSection = document.getElementById('about');
+  if (!aboutSection) return;
+
+  const phrases = aboutSection.querySelectorAll('.about-phrase');
+  const descriptions = aboutSection.querySelectorAll('.about-desc');
+  const container = aboutSection.querySelector('.about-scroller-container');
+  
+  let currentIndex = -1;
+  let hasInitialized = false;
+
+  // Initialize phrases on first view
+  function initializePhrases() {
+    if (hasInitialized) return;
+    hasInitialized = true;
+    
+    phrases.forEach((phrase, index) => {
+      setTimeout(() => {
+        phrase.classList.add('loaded');
+      }, index * 200);
+    });
+  }
+
+  // Calculate scroll progress within the about section
+  function getScrollProgress() {
+    const rect = aboutSection.getBoundingClientRect();
+    const sectionHeight = aboutSection.offsetHeight;
+    const viewportHeight = window.innerHeight;
+    
+    // Start when section enters viewport, end when it leaves
+    const scrollStart = -rect.top;
+    const scrollRange = sectionHeight - viewportHeight;
+    const progress = Math.max(0, Math.min(1, scrollStart / scrollRange));
+    
+    return progress;
+  }
+
+  // Draw arrow from phrase to description
+  function drawArrow(index) {
+    const phrase = phrases[index];
+    const description = document.getElementById(`aboutDesc${index + 1}`);
+    const arrowPath = document.getElementById(`aboutArrowPath${index + 1}`);
+    
+    if (!phrase || !description || !arrowPath) return;
+
+    const phraseRect = phrase.getBoundingClientRect();
+    const descRect = description.getBoundingClientRect();
+    const centerX = phraseRect.left + phraseRect.width / 2;
+    
+    const lineX = (index === 2) 
+      ? centerX + (phraseRect.width * 0.15)
+      : centerX;
+    
+    const descIsBelow = descRect.top > phraseRect.bottom;
+    const startY = descIsBelow ? phraseRect.bottom : phraseRect.top;
+    const endY = descIsBelow ? descRect.top : descRect.bottom;
+
+    const pathData = `M ${lineX} ${startY} L ${lineX} ${endY}`;
+    arrowPath.setAttribute('d', pathData);
+    
+    // Show arrow smoothly
+    arrowPath.classList.add('visible');
+  }
+
+  // Hide arrow
+  function hideArrow(index) {
+    const arrowPath = document.getElementById(`aboutArrowPath${index + 1}`);
+    if (arrowPath) {
+      arrowPath.classList.remove('visible');
+    }
+  }
+
+  // Activate phrase based on index
+  function activatePhrase(index) {
+    if (index < 0 || index >= phrases.length) return;
+    
+    phrases[index].classList.add('active');
+    
+    const borderPath = phrases[index].querySelector('.about-border-path');
+    if (borderPath) {
+      const pathLength = borderPath.getTotalLength();
+      borderPath.style.strokeDasharray = pathLength;
+      borderPath.style.strokeDashoffset = '0';
+    }
+
+    // Show description and keep it visible
+    const description = document.getElementById(`aboutDesc${index + 1}`);
+    if (description) {
+      description.classList.add('visible');
+    }
+
+    // Draw arrow after a small delay to ensure smooth rendering
+    setTimeout(() => {
+      drawArrow(index);
+    }, 100);
+  }
+
+  // Deactivate phrase
+  function deactivatePhrase(index) {
+    if (index < 0 || index >= phrases.length) return;
+    
+    phrases[index].classList.remove('active');
+    
+    const borderPath = phrases[index].querySelector('.about-border-path');
+    if (borderPath) {
+      const pathLength = borderPath.getTotalLength();
+      borderPath.style.strokeDasharray = pathLength;
+      borderPath.style.strokeDashoffset = pathLength;
+    }
+
+    hideArrow(index);
+  }
+
+  // Update based on scroll progress
+  function updateOnScroll() {
+    const rect = aboutSection.getBoundingClientRect();
+    
+    // Initialize when section enters viewport
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      initializePhrases();
+    }
+    
+    // Only process if section is in viewport
+    if (rect.top > window.innerHeight || rect.bottom < 0) {
+      return;
+    }
+    
+    const progress = getScrollProgress();
+    
+    // Define thresholds for each phrase (0 to 1)
+    const thresholds = [
+      { start: 0.1, end: 0.85 },   // Phrase 0: "Ми"
+      { start: 0.25, end: 0.85 },  // Phrase 1: "будуємо"
+      { start: 0.5, end: 0.85 },   // Phrase 2: "більше ніж склади"
+      { start: 0.7, end: 0.95 }    // Phrase 3: "ми будуємо можливості" - extended end for delay
+    ];
+    
+    let newIndex = -1;
+    
+    // Determine which phrase should be active
+    for (let i = 0; i < thresholds.length; i++) {
+      if (progress >= thresholds[i].start && progress <= thresholds[i].end) {
+        newIndex = i;
+      }
+    }
+    
+    // Update active phrase if changed
+    if (newIndex !== currentIndex) {
+      // Deactivate old phrase
+      if (currentIndex >= 0) {
+        deactivatePhrase(currentIndex);
+      }
+      
+      // Activate new phrase
+      if (newIndex >= 0) {
+        activatePhrase(newIndex);
+      }
+      
+      currentIndex = newIndex;
+    }
+  }
+
+  // Scroll event listener
+  window.addEventListener('scroll', updateOnScroll, { passive: true });
+  
+  // Resize handler
+  window.addEventListener('resize', () => {
+    if (currentIndex >= 0) {
+      drawArrow(currentIndex);
+    }
+  });
+
+  // Initial check
+  updateOnScroll();
+})();

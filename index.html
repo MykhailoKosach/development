@@ -105,19 +105,19 @@
     </section>
 
 <section class="section section-dark" id="why">
-  <div class="container about-layout">
+  <div class="container why-layout">
     <!-- LEFT COLUMN – title, same as About -->
-    <div class="about-main">
+    <div class="why-header">
       <h2>Чому ProTec Development</h2>
-      <p class="about-lead">
+      <p class="why-lead">
         Склади та промислові об’єкти, які створені під процеси вашого бізнесу, а не навпаки.
       </p>
     </div>
 
     <!-- RIGHT COLUMN – stacked animated steps, with icons -->
-    <div class="about-steps">
-      <article class="about-step visible" data-about-step>
-        <div class="about-step-header">
+    <div class="why-cards">
+      <article class="why-card">
+        <div class="why-card-header">
           <div class="why-icon">A+</div>
           <h3>Високий клас складів</h3>
         </div>
@@ -126,8 +126,8 @@
         </p>
       </article>
 
-      <article class="about-step" data-about-step>
-        <div class="about-step-header">
+      <article class="why-card">
+        <div class="why-card-header">
           <div class="why-icon">27</div>
           <h3>27 років досвіду</h3>
         </div>
@@ -136,8 +136,8 @@
         </p>
       </article>
 
-      <article class="about-step" data-about-step>
-        <div class="about-step-header">
+      <article class="why-card">
+        <div class="why-card-header">
           <div class="why-icon">Land</div>
           <h3>Власний банк землі</h3>
         </div>
@@ -146,8 +146,8 @@
         </p>
       </article>
 
-      <article class="about-step" data-about-step>
-        <div class="about-step-header">
+      <article class="why-card">
+        <div class="why-card-header">
           <div class="why-icon">360°</div>
           <h3>Комплексність та персоналізація</h3>
         </div>
@@ -268,38 +268,58 @@
   </div>
 </section>
 
-
-    <!-- ABOUT US -->
-    <section class="section section-dark" id="about">
-      <div class="container about-layout">
-        <div class="about-main">
-          <h2>Ми будуємо більше ніж склади, ми будуємо можливості</h2>
-          <p class="about-lead">
-            Інфраструктура, яка дозволяє бізнесу зростати, а логістиці — працювати безперебійно.
-          </p>
+    <!-- ABOUT - MISSION SCROLLER -->
+    <section class="section" id="about">
+      <div class="container about-scroller-container">
+        <div class="about-mission-text">
+          <span class="about-phrase" data-index="0">
+            Ми
+            <svg class="about-border-svg">
+              <rect class="about-border-path" x="0" y="0" width="100%" height="100%" rx="8" ry="8"></rect>
+            </svg>
+          </span>
+          <span class="about-phrase" data-index="1">
+            будуємо
+            <svg class="about-border-svg">
+              <rect class="about-border-path" x="0" y="0" width="100%" height="100%" rx="8" ry="8"></rect>
+            </svg>
+          </span>
+          <span class="about-phrase" data-index="2">
+            більше ніж склади,
+            <svg class="about-border-svg">
+              <rect class="about-border-path" x="0" y="0" width="100%" height="100%" rx="8" ry="8"></rect>
+            </svg>
+          </span>
+          <br>
+          <span class="about-phrase" data-index="3">
+            ми будуємо можливості
+            <svg class="about-border-svg">
+              <rect class="about-border-path" x="0" y="0" width="100%" height="100%" rx="8" ry="8"></rect>
+            </svg>
+          </span>
         </div>
 
-        <div class="about-steps">
-          <article class="about-step visible" data-about-step>
-            <h3>Ми</h3>
-            <p>Команда ProTec Development: архітектори, інженери, проєктувальники, девелопери, менеджери з експлуатації. Повний цикл — від ідеї до управління об’єктом.</p>
-          </article>
-
-          <article class="about-step" data-about-step>
-            <h3>Будуємо</h3>
-            <p>Не лише про фізичне зведення. Це концепція, індивідуальний проєкт, економічне планування, контроль якості та сучасні технології.</p>
-          </article>
-
-          <article class="about-step" data-about-step>
-            <h3>Більше ніж склади</h3>
-            <p>Комплексні об’єкти: A/A+ склади, холодильні та морозильні приміщення, офіси — простір для логістики, роботи та масштабування бізнесу.</p>
-          </article>
-
-          <article class="about-step" data-about-step>
-            <h3>Ми будуємо можливості</h3>
-            <p>Інвестиційні моделі — будівництво під запит, викуп чи управління. Ми беремо на себе інфраструктуру, щоб ви зосередилися на бізнесі.</p>
-          </article>
+        <!-- Descriptions -->
+        <div class="about-desc about-desc-1" id="aboutDesc1">
+          Команда ProTec Development: архітектори, інженери, проектувальники, девелопери.
         </div>
+        <div class="about-desc about-desc-2" id="aboutDesc2">
+          Повний цикл — від пошуку ділянки до управління об'єктом.
+        </div>
+        <div class="about-desc about-desc-3" id="aboutDesc3">
+          Не лише про фізичне зведення. Це про створення концепції, розробку індивідуального проєкту, контроль якості.
+        </div>
+        <div class="about-desc about-desc-4" id="aboutDesc4">
+          Ми будуємо можливості для розвитку бізнесу, створюємо простір для логістики, роботи та масштабування.
+        </div>
+
+        <!-- Dynamic arrow SVG container -->
+        <svg id="aboutArrowContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;">
+          <path id="aboutArrowPath1" class="about-arrow-path" d="" />
+          <path id="aboutArrowPath2" class="about-arrow-path" d="" />
+          <path id="aboutArrowPath3" class="about-arrow-path" d="" />
+          <path id="aboutArrowPath4" class="about-arrow-path" d="" />
+        </svg>
       </div>
     </section>
 
