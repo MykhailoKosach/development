@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Section - Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --accent: #e32225;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f9fafb;
+      overflow-x: hidden;
+    }
+
+    .section {
+      position: relative;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* ================================
+       ABOUT SECTION - MISSION SCROLLER
+       ================================ */
+
+    #about {
+      position: relative;
+      min-height: 600vh;
+      background: #ffffff;
+      padding: 100px 0;
+    }
+
+    .about-scroller-container {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 80px 16px;
+      overflow: hidden;
+    }
+
+    .about-mission-text {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.6;
+      width: 90%;
+      max-width: 1000px;
+      text-align: left;
+      color: #111827;
+    }
+
+    .about-phrase {
+      display: inline-block;
+      position: relative;
+      padding: 6px 10px;
+      margin: 6px 8px;
+      cursor: default;
+      user-select: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .about-phrase.loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* SVG border frame */
+    .about-border-svg {
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      width: calc(100% + 4px);
+      height: calc(100% + 4px);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .about-phrase.active .about-border-svg {
+      opacity: 1;
+    }
+
+    .about-border-path {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 2;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      transition: stroke-dashoffset 1s ease;
+      will-change: stroke-dashoffset;
+    }
+
+    .about-phrase.active .about-border-path {
+      stroke-dashoffset: 0;
+    }
+
+    /* Arrow paths */
+    .about-arrow-path {
+      stroke: #111827;
+      stroke-width: 2;
+      fill: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .about-arrow-path.visible {
+      opacity: 1;
+    }
+
+    /* Descriptions */
+/* Mobile description cards - stacked vertically with animation */
+.about-desc {
+  position: relative;
+  max-width: 100%;
+  width: 100%;
+  font-size: 0.9rem;
+  margin: 0 0 16px 0;
+  left: auto;
+  right: auto;
+  top: auto;
+  bottom: auto;
+
+  /* animation base state */
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 20px;          /* horizontal padding only when hidden */
+  pointer-events: none;
+  display: block;           /* keep block so max-height can animate */
+
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease,
+    max-height 0.45s ease,
+    padding-top 0.45s ease,
+    padding-bottom 0.45s ease;
+}
+
+.about-desc.mobile-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  max-height: 260px;        /* big enough for your content */
+  padding-top: 16px;
+  padding-bottom: 18px;
+  pointer-events: auto;
+}
+
+    .about-desc.visible {
+      opacity: 1;
+    }
+
+    /* Description positioning */
+    .about-desc-1 { 
+      top: 10%; 
+      left: 10%; 
+      text-align: left; 
+    }
+
+    .about-desc-2 { 
+      top: 20%; 
+      left: 20%; 
+      text-align: left; 
+    }
+
+    .about-desc-3 { 
+      top: 60%; 
+      left: 70%; 
+      text-align: left; 
+    }
+
+    .about-desc-4 { 
+      bottom: 10%; 
+      left: 10%; 
+      text-align: left; 
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 720px) {
+      #about {
+        min-height: 100vh;
+        padding: 0;
+      }
+
+      .about-scroller-container {
+        position: relative;
+        height: 100vh;
+        padding: 80px 20px 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+      }
+
+      .about-mission-text {
+        font-size: 2rem;
+        width: 100%;
+        text-align: left;
+        margin-bottom: 40px;
+        min-height: 180px;
+        line-height: 1.4;
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+      }
+
+      .about-phrase {
+        padding: 0;
+        margin: 0 4px;
+        display: inline-block;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(30px) scale(0.9);
+        transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    visibility 0s 0.6s;
+      }
+
+      .about-phrase.mobile-visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+        transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    visibility 0s;
+      }
+
+      /* Hide desktop arrows and borders on mobile */
+      #aboutArrowContainer {
+        display: none;
+      }
+
+      .about-border-svg {
+        display: none;
+      }
+
+      /* Mobile description cards - stacked vertically */
+      .about-desc {
+        position: relative;
+        max-width: 100%;
+        width: 100%;
+        font-size: 0.9rem;
+        padding: 16px 20px;
+        margin: 0 0 16px 0;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        opacity: 0;
+        transform: translateY(50px) scale(0.95);
+        pointer-events: auto;
+        transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: none;
+      }
+
+      .about-desc.mobile-visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        display: block;
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .about-phrase,
+      .about-border-path,
+      .about-arrow-path,
+      .about-desc {
+        transition: none;
+      }
+    }
+
+    /* Demo helper */
+    .demo-spacer {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #6b7280;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="demo-spacer">
+    ↓ Scroll Down ↓
+  </div>
+
+  <!-- ABOUT - MISSION SCROLLER -->
+  <section class="section" id="about">
+    <div class="container about-scroller-container">
+      <div class="about-mission-text">
+        <span class="about-phrase" data-index="0">
+          Ми
+          <svg class="about-border-svg">
+            <rect class="about-border-path" x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="4" ry="4"></rect>
+          </svg>
+        </span>
+        <span class="about-phrase" data-index="1">
+          будуємо
+          <svg class="about-border-svg">
+            <rect class="about-border-path" x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="4" ry="4"></rect>
+          </svg>
+        </span>
+        <span class="about-phrase" data-index="2">
+          більше ніж склади,
+          <svg class="about-border-svg">
+            <rect class="about-border-path" x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="4" ry="4"></rect>
+          </svg>
+        </span>
+        <br>
+        <span class="about-phrase" data-index="3">
+          ми будуємо можливості
+          <svg class="about-border-svg">
+            <rect class="about-border-path" x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)" rx="4" ry="4"></rect>
+          </svg>
+        </span>
+      </div>
+
+      <!-- Descriptions -->
+      <div class="about-desc about-desc-1" id="aboutDesc1">
+        Команда ProTec Development: архітектори, інженери, проектувальники, девелопери.
+      </div>
+      <div class="about-desc about-desc-2" id="aboutDesc2">
+        Повний цикл — від пошуку ділянки до управління об'єктом.
+      </div>
+      <div class="about-desc about-desc-3" id="aboutDesc3">
+        Не лише про фізичне зведення. Це про створення концепції, розробку індивідуального проєкту, контроль якості.
+      </div>
+      <div class="about-desc about-desc-4" id="aboutDesc4">
+        Ми будуємо можливості для розвитку бізнесу, створюємо простір для логістики, роботи та масштабування.
+      </div>
+
+      <!-- Dynamic arrow SVG container -->
+      <svg id="aboutArrowContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;">
+        <path id="aboutArrowPath1" class="about-arrow-path" d="" />
+        <path id="aboutArrowPath2" class="about-arrow-path" d="" />
+        <path id="aboutArrowPath3" class="about-arrow-path" d="" />
+        <path id="aboutArrowPath4" class="about-arrow-path" d="" />
+      </svg>
+    </div>
+  </section>
+
+  <div class="demo-spacer">
+    ↑ Scroll Up ↑
+  </div>
+
+  <script>
+    // ================================
+    // ABOUT SECTION - MISSION SCROLLER
+    // ================================
+    (function() {
+      const aboutSection = document.getElementById('about');
+      if (!aboutSection) return;
+
+      const phrases = aboutSection.querySelectorAll('.about-phrase');
+      const descriptions = aboutSection.querySelectorAll('.about-desc');
+      const container = aboutSection.querySelector('.about-scroller-container');
+      
+    //   const isMobile = window.innerWidth <= 720;
+
+      // ==================== MOBILE VERSION ====================
+          // ==================== MOBILE VERSION ====================
+      const isMobile = window.matchMedia("(max-width: 720px)").matches;
+
+      if (isMobile) {
+        const maxStep = phrases.length - 1;
+        let mobileCurrentStep = 0;
+        let touchStartY = 0;
+        let touchStartX = 0;
+        let lastDeltaY = 0;
+        let gestureLocked = false;
+        let isAnimating = false;
+
+        function showMobileStep(step) {
+          // If reached last step, unlock scroll and unfix section
+        if (step === phrases.length - 1) {
+        setTimeout(() => {
+            isSectionFixed = false;
+            unlockScroll();
+            aboutSection.style.position = 'relative';
+            aboutSection.style.top = '';
+            aboutSection.style.left = '';
+            aboutSection.style.right = '';
+            aboutSection.style.zIndex = '';
+
+            // Let the document continue from where the section visually is
+            window.scrollBy(0, 1); // tiny nudge to resume native scroll
+        }, 600);
+        }
+
+          // Phrases: show all up to current step (cumulative)
+          phrases.forEach((phrase, index) => {
+            if (index <= step) {
+              setTimeout(() => {
+                phrase.classList.add("mobile-visible");
+              }, index * 80);
+            } else {
+              phrase.classList.remove("mobile-visible");
+            }
+          });
+
+          // Descriptions: stacked cards below text
+          descriptions.forEach((desc, index) => {
+            if (index <= step) {
+              setTimeout(() => {
+                desc.classList.add("mobile-visible");
+              }, 150 + index * 80);
+            } else {
+              desc.classList.remove("mobile-visible");
+            }
+          });
+        }
+
+        function handleTouchStart(e) {
+          if (isAnimating) return;
+          const t = e.touches[0];
+          touchStartY = t.clientY;
+          touchStartX = t.clientX;
+          lastDeltaY = 0;
+          gestureLocked = false;
+        }
+
+        function handleTouchMove(e) {
+          if (isAnimating) return;
+
+          const t = e.touches[0];
+          const deltaY = t.clientY - touchStartY;
+          const deltaX = t.clientX - touchStartX;
+          lastDeltaY = deltaY;
+
+          const absY = Math.abs(deltaY);
+          const absX = Math.abs(deltaX);
+
+          // Not enough movement or mostly horizontal → let page scroll normally
+          if (absY < 10 || absY < absX) return;
+
+          // At first step & swiping down → let page scroll up (exit section)
+          if (deltaY > 0 && mobileCurrentStep === 0) return;
+
+          // At last step & swiping up → let page scroll down (exit section)
+          if (deltaY < 0 && mobileCurrentStep === maxStep) return;
+
+          // Otherwise, we take over this gesture
+          gestureLocked = true;
+          e.preventDefault(); // stops the page from scrolling while we handle the swipe
+        }
+
+        function handleTouchEnd(e) {
+          if (!gestureLocked || isAnimating) {
+            gestureLocked = false;
+            return;
+          }
+
+          const absY = Math.abs(lastDeltaY);
+          const SWIPE_THRESHOLD = 30; // px
+
+          if (absY < SWIPE_THRESHOLD) {
+            gestureLocked = false;
+            return;
+          }
+
+          isAnimating = true;
+
+          // Swipe up → next step
+          if (lastDeltaY < 0 && mobileCurrentStep < maxStep) {
+            showMobileStep(mobileCurrentStep + 1);
+          }
+          // Swipe down → previous step
+          else if (lastDeltaY > 0 && mobileCurrentStep > 0) {
+            showMobileStep(mobileCurrentStep - 1);
+          }
+
+          // Release after the CSS animation time
+          setTimeout(() => {
+            isAnimating = false;
+            gestureLocked = false;
+          }, 650);
+        }
+
+        aboutSection.addEventListener("touchstart", handleTouchStart, { passive: false });
+        aboutSection.addEventListener("touchmove", handleTouchMove, { passive: false });
+        aboutSection.addEventListener("touchend", handleTouchEnd, { passive: false });
+
+        // Initial state: first phrase + its card visible
+        showMobileStep(0);
+
+        // Important: don't run desktop logic below
+        return;
+      }
+
+
+      // ==================== DESKTOP VERSION ====================
+      let currentIndex = -1;
+      let hasInitialized = false;
+      let isAnimating = false;
+      let animationTimeout = null;
+      let scrollListenerActive = true;
+      let lastActivatedIndex = -1;
+
+      // Initialize phrases on first view
+      function initializePhrases() {
+        if (hasInitialized) return;
+        hasInitialized = true;
+        
+        phrases.forEach((phrase, index) => {
+          setTimeout(() => {
+            phrase.classList.add('loaded');
+          }, index * 200);
+        });
+      }
+
+      // Calculate scroll progress within the about section
+      function getScrollProgress() {
+        const rect = aboutSection.getBoundingClientRect();
+        const sectionHeight = aboutSection.offsetHeight;
+        const viewportHeight = window.innerHeight;
+        
+        // Start when section enters viewport, end when it leaves
+        const scrollStart = -rect.top;
+        const scrollRange = sectionHeight - viewportHeight;
+        const progress = Math.max(0, Math.min(1, scrollStart / scrollRange));
+        
+        return progress;
+      }
+
+      // Draw arrow from phrase to description
+      function drawArrow(index) {
+        const phrase = phrases[index];
+        const description = document.getElementById(`aboutDesc${index + 1}`);
+        const arrowPath = document.getElementById(`aboutArrowPath${index + 1}`);
+        
+        if (!phrase || !description || !arrowPath) return;
+
+        const phraseRect = phrase.getBoundingClientRect();
+        const descRect = description.getBoundingClientRect();
+        
+        // Define horizontal offset for arrow start point
+        // Can use percentage (0-1) or add absolute pixel offset
+        const arrowConfig = [
+          { offset: 0.25, pixelOffset: -130 },  // Phrase 0: "Ми" - 25% + 10px left
+          { offset: 0.1, pixelOffset: -50 },    // Phrase 1: "будуємо"
+          { offset: 0.5, pixelOffset: 0 },     // Phrase 2: "більше ніж склади"
+          { offset: 0.2, pixelOffset: 0 }      // Phrase 3: "ми будуємо можливості"
+        ];
+        
+        const config = arrowConfig[index];
+        
+        // Calculate arrow X position: percentage of width + pixel adjustment
+        const arrowX = phraseRect.left + (phraseRect.width * config.offset) + config.pixelOffset;
+        
+        // Determine if description is above or below phrase
+        const descIsBelow = descRect.top > phraseRect.bottom;
+        
+        // Start point: custom X position on phrase edge (top or bottom)
+        const startX = arrowX;
+        const startY = descIsBelow ? phraseRect.bottom : phraseRect.top;
+        
+        // End point: same X position on description edge (perfectly vertical line)
+        const endX = arrowX;
+        const endY = descIsBelow ? descRect.top : descRect.bottom;
+
+        // Perfectly straight vertical line
+        const pathData = `M ${startX} ${startY} L ${endX} ${endY}`;
+        arrowPath.setAttribute('d', pathData);
+        
+        // Show arrow smoothly
+        arrowPath.classList.add('visible');
+      }
+
+      // Hide arrow
+      function hideArrow(index) {
+        const arrowPath = document.getElementById(`aboutArrowPath${index + 1}`);
+        if (arrowPath) {
+          arrowPath.classList.remove('visible');
+        }
+      }
+
+      // Activate phrase based on index
+      function activatePhrase(index) {
+        if (index < 0 || index >= phrases.length) return;
+        
+        // Don't re-activate if already active OR if it was the last one we activated
+        if (phrases[index].classList.contains('active') || lastActivatedIndex === index) return;
+        
+        lastActivatedIndex = index;
+        phrases[index].classList.add('active');
+        
+        const borderPath = phrases[index].querySelector('.about-border-path');
+        if (borderPath) {
+          const pathLength = borderPath.getTotalLength();
+          borderPath.style.strokeDasharray = pathLength;
+          borderPath.style.strokeDashoffset = '0';
+        }
+
+        // Show description and keep it visible
+        const description = document.getElementById(`aboutDesc${index + 1}`);
+        if (description) {
+          description.classList.add('visible');
+        }
+
+        // Draw arrow after a small delay to ensure smooth rendering
+        setTimeout(() => {
+          drawArrow(index);
+        }, 100);
+      }
+
+      // Deactivate phrase
+      function deactivatePhrase(index) {
+        if (index < 0 || index >= phrases.length) return;
+        
+        phrases[index].classList.remove('active');
+        
+        const borderPath = phrases[index].querySelector('.about-border-path');
+        if (borderPath) {
+          const pathLength = borderPath.getTotalLength();
+          borderPath.style.strokeDasharray = pathLength;
+          borderPath.style.strokeDashoffset = pathLength;
+        }
+
+        hideArrow(index);
+        
+        // Reset last activated when deactivating
+        if (lastActivatedIndex === index) {
+          lastActivatedIndex = -1;
+        }
+      }
+
+      // Update based on scroll progress
+      function updateOnScroll() {
+        // Skip updates if currently animating
+        if (isAnimating) return;
+        
+        const rect = aboutSection.getBoundingClientRect();
+        
+        // Initialize when section enters viewport
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          initializePhrases();
+        }
+        
+        // Only process if section is in viewport
+        if (rect.top > window.innerHeight || rect.bottom < 0) {
+          return;
+        }
+        
+        const progress = getScrollProgress();
+        
+        // Define thresholds for each phrase (0 to 1) - non-overlapping ranges
+        const thresholds = [
+          { start: 0.1, end: 0.25 },   // Phrase 0: "Ми"
+          { start: 0.25, end: 0.5 },   // Phrase 1: "будуємо"
+          { start: 0.5, end: 0.7 },    // Phrase 2: "більше ніж склади"
+          { start: 0.7, end: 0.95 }    // Phrase 3: "ми будуємо можливості"
+        ];
+        
+        let newIndex = -1;
+        
+        // Determine which phrase should be active (find the last matching one)
+        for (let i = 0; i < thresholds.length; i++) {
+          if (progress >= thresholds[i].start) {
+            newIndex = i;
+          }
+        }
+        
+        // Update active phrase if changed
+        if (newIndex !== currentIndex) {
+          // Additional safety check - skip if already animating to this exact phrase
+          if (isAnimating && newIndex === lastActivatedIndex) {
+            return;
+          }
+          
+          // Disable scroll listener during animation
+          scrollListenerActive = false;
+          isAnimating = true;
+          
+          // Clear any existing timeout
+          if (animationTimeout) {
+            clearTimeout(animationTimeout);
+          }
+          
+          // Deactivate old phrase (only if it's different from new one)
+          if (currentIndex >= 0 && currentIndex !== newIndex) {
+            deactivatePhrase(currentIndex);
+          }
+          
+          // Activate new phrase
+          if (newIndex >= 0) {
+            activatePhrase(newIndex);
+          }
+          
+          currentIndex = newIndex;
+          
+          // Release animation lock after border and arrow animations complete
+          // Border animation: 1s, Arrow drawing: ~150ms total (100ms delay + 50ms)
+          animationTimeout = setTimeout(() => {
+            isAnimating = false;
+            scrollListenerActive = true;
+          }, 1200);
+        }
+      }
+
+      // Scroll event listener with throttling during animation
+      function handleScroll() {
+        if (!scrollListenerActive) return;
+        updateOnScroll();
+      }
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      
+      // Resize handler
+      window.addEventListener('resize', () => {
+        if (currentIndex >= 0) {
+          drawArrow(currentIndex);
+        }
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

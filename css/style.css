@@ -1447,10 +1447,10 @@ body {
 /* SVG border frame */
 .about-border-svg {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: -2px;
+  left: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -1463,7 +1463,9 @@ body {
 .about-border-path {
   fill: none;
   stroke: var(--accent);
-  stroke-width: 3;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
   transition: stroke-dashoffset 1s ease;
@@ -1524,7 +1526,7 @@ body {
 
 .about-desc-3 { 
   top: 60%; 
-  left: 65%; 
+  left: 70%; 
   text-align: left; 
 }
 
@@ -1536,34 +1538,94 @@ body {
 
 /* Mobile adjustments */
 @media (max-width: 720px) {
+  #about {
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .about-scroller-container {
+    position: relative;
+    height: 100vh;
+    padding: 80px 20px 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
   .about-mission-text {
-    font-size: 1.75rem;
-    width: 95%;
+    font-size: 2rem;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 40px;
+    min-height: 180px;
+    line-height: 1.4;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
   }
 
   .about-phrase {
-    padding: 4px 8px;
-    margin: 4px 6px;
+    padding: 0;
+    margin: 0 4px;
+    display: inline-block;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(30px) scale(0.9);
+    transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                visibility 0s 0.6s;
   }
 
+  .about-phrase.mobile-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                visibility 0s;
+  }
+
+  /* Hide desktop arrows and borders on mobile */
+  #aboutArrowContainer {
+    display: none;
+  }
+
+  .about-border-svg {
+    display: none;
+  }
+
+  /* Mobile description cards - stacked vertically */
   .about-desc {
-    max-width: 280px;
-    font-size: 0.8rem;
-    padding: 10px 12px;
-  }
-
-  .about-desc-1,
-  .about-desc-2,
-  .about-desc-3,
-  .about-desc-4 {
-    left: 5%;
+    position: relative;
+    max-width: 100%;
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 16px 20px;
+    margin: 0 0 16px 0;
+    left: auto;
     right: auto;
+    top: auto;
+    bottom: auto;
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+    pointer-events: auto;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: none;
   }
 
-  .about-desc-1 { top: 10%; }
-  .about-desc-2 { top: 20%; }
-  .about-desc-3 { top: auto; bottom: 25%; left: 5%; }
-  .about-desc-4 { bottom: 10%; }
+  .about-desc.mobile-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    display: block;
+  }
+}
+
+/* Desktop: hide mobile indicator */
+@media (min-width: 721px) {
+  .mobile-swipe-indicator {
+    display: none;
+  }
 }
 
 /* Reduced motion */
