@@ -507,99 +507,9 @@ a {
   margin-bottom: 8px;
 }
 
-/* SERVICES LINE */
-.services-line {
-  margin-top: 32px;
-  margin-bottom: 24px;
-}
-
-.services-line-track {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  position: relative;
-  z-index: 2;
-}
-
-.services-point {
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(9, 10, 14, 0.9);
-  color: #fff;
-  font-size: 0.86rem;
-  cursor: pointer;
-  transition: background 0.18s ease-out, border-color 0.18s ease-out, transform 0.18s ease-out;
-}
-
-.services-point.active {
-  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
-  border-color: rgba(255, 255, 255, 0.7);
-  transform: translateY(-1px);
-}
-
-.services-line-bar {
-  height: 1px;
-  margin-top: 10px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), transparent);
-}
-
-.services-content {
-  margin-top: 16px;
-}
-
-.service-detail {
-  display: none;
-  max-width: 620px;
-}
-
-.service-detail.active {
-  display: block;
-}
-
-/* EXTRA SERVICES */
-.extra-services {
-  margin-top: 48px;
-}
-
-.extra-services-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 16px;
-}
-
-.extra-card {
-  background: #101119;
-  border-radius: var(--radius-md);
-  padding: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, border-color 0.18s ease-out;
-}
-
-.extra-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
-  border-color: rgba(214, 40, 40, 0.7);
-}
-
-.extra-card p {
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
-.extra-link {
-  font-size: 0.86rem;
-  color: var(--accent-soft);
-}
-
-/* PROJECTS SLIDER */
-/* ================================
-   PROJECTS DECK GALLERY (Реалізовані проєкти)
-   ================================ */
+/* =======================================
+   PROJECTS GALLERY
+   ======================================= */
 
 .projects-gallery-wrap {
   position: relative;
@@ -1461,33 +1371,26 @@ body {
   width: 90%;
   max-width: 1000px;
   text-align: left;
-  color: #111827;
 }
 
 .about-phrase {
-  display: inline-block;
   position: relative;
-  padding: 6px 10px;
-  margin: 6px 8px;
-  cursor: default;
-  user-select: none;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  display: inline;
+  padding: 4px 8px;
+  margin: 0 6px;
+  transition: opacity 0.5s ease;
 }
 
 .about-phrase.loaded {
   opacity: 1;
-  transform: translateY(0);
 }
 
-/* SVG border frame */
 .about-border-svg {
   position: absolute;
-  top: -2px;
-  left: -2px;
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
+  top: -4px;
+  left: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -1623,6 +1526,10 @@ body {
                 visibility 0s;
   }
 
+  .about-phrase.mobile-active {
+    color: var(--accent);
+  }
+
   /* Hide desktop arrows and borders on mobile */
   #aboutArrowContainer {
     display: none;
@@ -1655,6 +1562,10 @@ body {
     opacity: 1;
     transform: translateY(0) scale(1);
     display: block;
+  }
+
+  .about-desc.mobile-active {
+    border: 2px solid var(--accent);
   }
 }
 
@@ -1796,12 +1707,14 @@ body {
   position: relative;
   padding: 20px 0;
   min-height: 500px;
+  touch-action: pan-y;
 }
 
 .project-gallery {
   position: relative;
   height: clamp(400px, 50vh, 600px);
   overflow: visible;
+  touch-action: pan-y;
 }
 
 .gallery-slide {
@@ -2004,6 +1917,11 @@ body {
 
 .advantages-nav .btn {
   min-width: 140px;
+  box-shadow: none;
+}
+
+.advantages-nav .btn-outline {
+  box-shadow: none;
 }
 
 @media (max-width: 768px) {
@@ -2016,11 +1934,6 @@ body {
   }
 
   .advantages-nav {
-    flex-direction: column;
     gap: 12px;
-  }
-
-  .advantages-nav .btn {
-    width: 100%;
   }
 }

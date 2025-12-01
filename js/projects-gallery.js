@@ -50,6 +50,10 @@
   const gallery = document.getElementById("projectsGallery");
   const dots = document.getElementById("projectsDots");
   if (!gallery || !dots) return;
+  
+  // Prevent double initialization
+  if (gallery.dataset.initialized === 'true') return;
+  gallery.dataset.initialized = 'true';
 
   // Build slides & dots
   data.forEach((p, i) => {
@@ -60,8 +64,8 @@
     card.setAttribute("aria-label", `${i + 1} з ${data.length}: ${p.name}`);
     
     const tagHtml = p.link && p.link !== "#" 
-      ? `<a href="${p.link}" class="tag project-tag">Реалізований проєкт</a>`
-      : `<span class="tag project-tag" aria-hidden="true">Реалізований проєкт</span>`;
+      ? `<a href="${p.link}" class="tag project-tag">Детальніше</a>`
+      : `<span class="tag project-tag" aria-hidden="true">Детальніше</span>`;
     
     card.innerHTML = `
       <img src="${p.img}" alt="${p.name}" loading="lazy" />

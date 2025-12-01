@@ -72,9 +72,16 @@
         if (index <= step) {
           setTimeout(() => {
             phrase.classList.add('mobile-visible');
+            // Remove active class from all, add only to current step
+            if (index === step) {
+              phrase.classList.add('mobile-active');
+            } else {
+              phrase.classList.remove('mobile-active');
+            }
           }, index * 100);
         } else {
           phrase.classList.remove('mobile-visible');
+          phrase.classList.remove('mobile-active');
         }
       });
       
@@ -82,9 +89,16 @@
         if (index <= step) {
           setTimeout(() => {
             desc.classList.add('mobile-visible');
+            // Remove active class from all, add only to current step
+            if (index === step) {
+              desc.classList.add('mobile-active');
+            } else {
+              desc.classList.remove('mobile-active');
+            }
           }, 200 + (index * 100));
         } else {
           desc.classList.remove('mobile-visible');
+          desc.classList.remove('mobile-active');
         }
       });
     }

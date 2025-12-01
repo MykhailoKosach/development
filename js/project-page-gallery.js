@@ -46,22 +46,46 @@
     const isMobile = w < 600;
 
     if (isMobile) {
-      // Mobile: Stack cards
+      // Mobile: Deck layout (same as main page)
       const cardW = w * 0.86;
       const cardH = gallery.clientHeight;
-      const offsetY = 16;
+      const activeLeft = (w - cardW) / 2;
+      const spread = cardW * 0.15;
 
       slides.forEach((s, idx) => {
         const pos = order.indexOf(idx);
         const isActive = pos === 0;
 
-        s.style.left = `${(w - cardW) / 2}px`;
+        let left = activeLeft;
+        let translateX = 0;
+        let scale = 1;
+        let zIndex = n - pos;
+        let opacity = 1;
+        let brightness = 1;
+
+        if (pos === 1) {
+          translateX = spread;
+          scale = 0.94;
+          brightness = 0.88;
+        } else if (pos === 2) {
+          translateX = spread * 1.4;
+          scale = 0.88;
+          brightness = 0.76;
+          opacity = 0.9;
+        } else if (pos > 2) {
+          translateX = spread * 1.7;
+          scale = 0.84;
+          brightness = 0.7;
+          opacity = 0;
+        }
+
+        s.style.left = `${left}px`;
         s.style.width = `${cardW}px`;
         s.style.height = `${cardH}px`;
-        s.style.transform = `translateY(${pos * offsetY}px) scale(${isActive ? 1 : 0.96})`;
-        s.style.zIndex = n - pos;
-        s.style.opacity = pos < 3 ? 1 : 0;
-        s.style.filter = isActive ? "brightness(1)" : "brightness(0.85)";
+        s.style.transform = `translateX(${translateX + parallax.t * -20}px) scale(${scale})`;
+        s.style.zIndex = zIndex;
+        s.style.opacity = opacity;
+        s.style.filter = `brightness(${brightness})`;
       });
     } else {
       // Desktop: Deck layout
@@ -143,7 +167,8 @@
   });
 
   // Touch/swipe support
-  let swipeTarget = gallery;
+  let swipeTarget = document.querySelector(".project-gallery-wrap");
+  if (!swipeTarget) swipeTarget = gallery;
   let startX = 0,
     startY = 0,
     isDragging = false;

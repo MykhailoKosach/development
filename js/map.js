@@ -1,5 +1,5 @@
 // ================================
-// MAP & SERVICES MODULE
+// MAP MODULE
 // ================================
 
 // Map popup functionality
@@ -58,24 +58,4 @@
       });
     }
   }
-})();
-
-// Services line interaction
-(function() {
-  const serviceButtons = document.querySelectorAll(".services-point");
-  const serviceDetails = document.querySelectorAll(".service-detail");
-
-  serviceButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const target = btn.getAttribute("data-service");
-
-      serviceButtons.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-
-      serviceDetails.forEach((detail) => {
-        const id = detail.getAttribute("data-service-detail");
-        detail.classList.toggle("active", id === target);
-      });
-    });
-  });
 })();
