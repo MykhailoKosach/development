@@ -1,107 +1,108 @@
-// ================================
-// SERVICES TIMELINE SECTION
-// ================================
+// Services Timeline Scroll Animation
+(function () {
+  const section = document.getElementById("services");
+  const fillBar = document.querySelector(".services-timeline-fill");
+  const dots = document.querySelectorAll(".timeline-dot");
+  const serviceDetails = document.querySelectorAll(".service-detail-timeline");
 
-(function() {
-  const section = document.getElementById('services');
-  if (!section || !section.classList.contains('services-timeline-section')) return;
+  if (!section || !fillBar || dots.length === 0) return;
 
-  const cards = section.querySelectorAll('.service-card');
-  const dots = section.querySelectorAll('.timeline-dot');
-  const fillLine = section.querySelector('.timeline-fill');
-  
-  const TOTAL_STEPS = cards.length;
-  let isFixed = false;
-  let scrollStart = 0;
+  const services = ["idea", "concept", "land", "design", "build", "operation"];
+  let currentActiveIndex = 0;
 
-  function handleScroll() {
+  const isMobile = window.innerWidth <= 768;
+
+  // Add height to section for scroll space (only on desktop)
+  if (!isMobile) {
+    const SCROLL_MULTIPLIER = 4; // Section will be 4x viewport height
+    section.style.minHeight = `${SCROLL_MULTIPLIER * 100}vh`;
+    
+    // Wrapper to hold the sticky content
+    const stickyWrapper = section.querySelector('.services-timeline-wrapper');
+    if (stickyWrapper) {
+      stickyWrapper.style.position = 'sticky';
+      stickyWrapper.style.top = '0';
+      stickyWrapper.style.height = '100vh';
+    }
+  }
+
+  function updateTimeline() {
     const rect = section.getBoundingClientRect();
+    const sectionTop = rect.top;
+    const sectionHeight = rect.height;
     const viewportHeight = window.innerHeight;
-    
-    // Section reaches top - fix it
-    if (rect.top <= 0 && !isFixed) {
-      isFixed = true;
-      section.style.position = 'fixed';
-      section.style.top = '0';
-      section.style.left = '0';
-      section.style.width = '100%';
-      section.style.height = '100vh';
-      section.style.zIndex = '100';
-      scrollStart = window.pageYOffset;
+
+    // Only animate when section is in view
+    if (sectionTop <= 0 && sectionTop > -sectionHeight + viewportHeight) {
+      // Calculate progress: 0 when section top hits viewport top, 1 when section bottom hits viewport bottom
+      const scrolled = -sectionTop;
+      let scrollRange = sectionHeight - viewportHeight;
       
-      // Add spacer to maintain scroll
-      const spacer = document.createElement('div');
-      spacer.id = 'services-spacer';
-      spacer.style.height = `${viewportHeight * TOTAL_STEPS}px`;
-      section.parentNode.insertBefore(spacer, section);
-    }
-    
-    // Calculate progress while fixed
-    if (isFixed) {
-      const scrolled = window.pageYOffset - scrollStart;
-      const maxScroll = viewportHeight * (TOTAL_STEPS - 1);
-      let progress = Math.max(0, Math.min(1, scrolled / maxScroll));
-      
-      // Update timeline fill
-      if (fillLine) {
-        fillLine.style.width = `${progress * 100}%`;
+      // For mobile, use a shorter scroll range for faster animation
+      if (isMobile) {
+        scrollRange = Math.min(scrollRange, viewportHeight * 1.5);
       }
       
-      // Update dots and cards
-      dots.forEach((dot, i) => {
-        const stepProgress = i / (TOTAL_STEPS - 1);
-        if (progress >= stepProgress) {
-          dot.classList.add('active');
-        } else {
-          dot.classList.remove('active');
-        }
-      });
-      
-      cards.forEach((card, i) => {
-        const stepProgress = i / (TOTAL_STEPS - 1);
-        if (progress >= stepProgress) {
-          card.classList.add('show');
-        } else {
-          card.classList.remove('show');
-        }
-      });
-      
-      // Unfix when done
-      if (scrolled >= maxScroll + viewportHeight / 2) {
-        isFixed = false;
-        section.style.position = '';
-        section.style.top = '';
-        section.style.left = '';
-        section.style.width = '';
-        section.style.height = '';
-        section.style.zIndex = '';
-        
-        const spacer = document.getElementById('services-spacer');
-        if (spacer) spacer.remove();
+      const progress = Math.max(0, Math.min(1, scrolled / scrollRange));
+
+      // Update fill bar (width for desktop, height for mobile)
+      if (isMobile) {
+        fillBar.style.height = `${progress * 100}%`;
+      } else {
+        fillBar.style.width = `${progress * 100}%`;
       }
-    }
-    
-    // Reset if scrolled back up
-    if (rect.top > 0 && !isFixed) {
-      const spacer = document.getElementById('services-spacer');
-      if (spacer) {
-        isFixed = false;
-        section.style.position = '';
-        section.style.top = '';
-        section.style.left = '';
-        section.style.width = '';
-        section.style.height = '';
-        section.style.zIndex = '';
-        spacer.remove();
-        
-        // Reset everything
-        if (fillLine) fillLine.style.width = '0%';
-        dots.forEach(dot => dot.classList.remove('active'));
-        cards.forEach(card => card.classList.remove('show'));
+
+      // Calculate which service should be active
+      const segmentSize = 1 / services.length;
+      let newActiveIndex = 0;
+      
+      for (let i = 0; i < services.length; i++) {
+        const dotThreshold = (i + 1) * segmentSize;
+        if (progress >= dotThreshold - 0.01) {
+          newActiveIndex = Math.min(i + 1, services.length - 1);
+        }
+      }
+      
+      if (progress < segmentSize - 0.01) {
+        newActiveIndex = 0;
+      }
+
+      // Update active state
+      if (newActiveIndex !== currentActiveIndex) {
+        currentActiveIndex = newActiveIndex;
+
+        dots.forEach((dot, index) => {
+          if (index <= currentActiveIndex) {
+            dot.classList.add("active");
+          } else {
+            dot.classList.remove("active");
+          }
+        });
+
+        serviceDetails.forEach((detail, index) => {
+          if (index === currentActiveIndex) {
+            detail.classList.add("active");
+          } else {
+            detail.classList.remove("active");
+          }
+        });
       }
     }
   }
 
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  handleScroll();
+  // Throttle scroll updates
+  let ticking = false;
+  function onScroll() {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        updateTimeline();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  window.addEventListener("scroll", onScroll);
+  updateTimeline();
 })();
+

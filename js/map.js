@@ -59,3 +59,35 @@
     }
   }
 })();
+
+// Services line interaction
+(function() {
+  const serviceButtons = document.querySelectorAll(".services-point");
+  const serviceDetails = document.querySelectorAll(".service-detail");
+
+  console.log('Services init:', serviceButtons.length, 'buttons,', serviceDetails.length, 'details');
+
+  if (serviceButtons.length === 0 || serviceDetails.length === 0) return;
+
+  serviceButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log('Clicked button:', btn.getAttribute("data-service"));
+      
+      const target = btn.getAttribute("data-service");
+
+      serviceButtons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      serviceDetails.forEach((detail) => {
+        const id = detail.getAttribute("data-service-detail");
+        if (id === target) {
+          detail.classList.add("active");
+          console.log('Showing:', id);
+        } else {
+          detail.classList.remove("active");
+        }
+      });
+    });
+  });
+})();

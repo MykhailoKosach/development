@@ -507,6 +507,196 @@ a {
   margin-bottom: 8px;
 }
 
+/* SERVICES TIMELINE */
+.services-timeline-wrapper {
+  position: relative;
+}
+
+#services {
+  position: relative;
+}
+
+.services-timeline {
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1180px;
+  padding: 0 16px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.services-timeline-base {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.services-timeline-fill {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  height: 2px;
+  background: var(--accent);
+  transform: translateY(-50%);
+  width: 0%;
+  transition: width 0.1s linear;
+  z-index: 2;
+}
+
+.services-timeline-dots {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  right: 16px;
+  width: calc(100% - 32px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 3;
+  transform: translateY(-50%);
+}
+
+.timeline-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+}
+
+.dot-circle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-dot.active .dot-circle {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(214, 40, 40, 0.6);
+  transform: scale(1.4);
+}
+
+.dot-label {
+  font-size: 0.85rem;
+  color: #1a1a1a;
+  transition: color 0.3s ease-out, font-weight 0.3s ease-out;
+  white-space: nowrap;
+  text-align: center;
+  position: absolute;
+  top: 100%;
+  margin-top: 20px;
+}
+
+.timeline-dot.active .dot-label {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.services-content-timeline {
+  position: absolute;
+  top: 250px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 700px;
+  width: 100%;
+  padding: 0 20px;
+  z-index: 5;
+}
+
+.service-detail-timeline {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+.service-detail-timeline.active {
+  opacity: 1;
+  transform: translateY(0);
+  position: relative;
+  pointer-events: auto;
+}
+
+.service-detail-timeline h3 {
+  margin-bottom: 12px;
+  font-size: 1.8rem;
+}
+
+.service-detail-timeline p {
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+/* EXTRA SERVICES */
+.extra-services {
+  position: absolute;
+  top: 450px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.extra-services h3 {
+  margin-bottom: 16px;
+  font-size: 1.3rem;
+}
+
+.extra-services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.extra-card {
+  background: #101119;
+  border-radius: var(--radius-md);
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, border-color 0.18s ease-out;
+}
+
+.extra-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+  border-color: rgba(214, 40, 40, 0.7);
+}
+
+.extra-card p {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.extra-link {
+  font-size: 0.86rem;
+  color: var(--accent-soft);
+}
+
 /* =======================================
    PROJECTS GALLERY
    ======================================= */
@@ -1270,6 +1460,36 @@ body {
   background: #ffffff;
 }
 
+/* SERVICES LINE */
+
+.services-point {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+  color: #111827;
+}
+
+.services-point.active {
+  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+  border-color: rgba(248, 250, 252, 0.7);
+  color: #ffffff;
+}
+
+.services-line-bar {
+  background: linear-gradient(90deg, rgba(148, 163, 184, 0.4), transparent);
+}
+
+/* EXTRA SERVICES CARDS */
+
+.extra-card {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
+.extra-card:hover {
+  border-color: rgba(227, 34, 37, 0.6);
+}
+
 .section-dark {
   background: #f4f5f7;
 }
@@ -1935,5 +2155,123 @@ body {
 
   .advantages-nav {
     gap: 12px;
+  }
+
+  /* Services timeline mobile adjustments */
+  .services-timeline-wrapper {
+    position: relative;
+  }
+
+  #services {
+    min-height: auto;
+  }
+
+  .services-timeline {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    max-width: 100%;
+    padding: 40px 20px;
+    height: auto;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .services-timeline-base {
+    left: 20px;
+    right: auto;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    height: 100%;
+    transform: none;
+    position: absolute;
+  }
+
+  .services-timeline-fill {
+    left: 20px;
+    top: 0;
+    width: 2px;
+    height: 0%;
+    transform: none;
+    position: absolute;
+    background: var(--accent);
+    transition: height 0.1s linear;
+  }
+
+  .services-timeline-dots {
+    display: none;
+  }
+
+  .services-content-timeline {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    max-width: 100%;
+    padding: 0;
+    padding-left: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+  }
+
+  .service-detail-timeline {
+    position: relative;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    display: block !important;
+  }
+
+  .service-detail-timeline::before {
+    content: '';
+    position: absolute;
+    left: -40px;
+    top: 8px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease-out;
+  }
+
+  .service-detail-timeline.active::before {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(214, 40, 40, 0.6);
+    transform: scale(1.4);
+  }
+
+  .service-detail-timeline h3 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    color: #1a1a1a;
+  }
+
+  .service-detail-timeline.active h3 {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .service-detail-timeline p {
+    color: #4a4a4a;
+  }
+
+  .extra-services {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    max-width: 100%;
+    padding: 0 20px;
+    margin-top: 60px;
+  }
+
+  .extra-services-grid {
+    grid-template-columns: 1fr;
   }
 }
