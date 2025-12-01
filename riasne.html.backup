@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <title>Riasne — ProTec Development</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="project-body-page">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">ProTec <span>Development</span></a>
+      <nav class="main-nav">
+        <a href="index.html#projects">Наші проєкти</a>
+        <a href="index.html#contacts">Контакти</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="project-main">
+    <section class="project-hero">
+      <div class="project-hero-image" style="background-image: url('https://picsum.photos/id/1005/1600/900');"></div>
+      <div class="project-hero-overlay"></div>
+      <div class="container project-hero-content">
+        <h1>Riasne</h1>
+        <p>Комплекс розташований на земельній ділянці площею 1,79 га та поєднує сучасні технічні рішення з продуманою інфраструктурою.</p>
+        <ul class="project-badges">
+          <li>7 235,6 м²</li>
+          <li>Тип: сухий, холодильний</li>
+          <li>Клас: B+</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container project-content">
+        <div class="project-columns">
+          <div>
+            <h2>Розташування</h2>
+            <p>
+              Комплекс розташований на земельній ділянці площею 1,79 га та поєднує сучасні технічні рішення з
+              продуманою інфраструктурою.
+            </p>
+
+            <h2>Технічні характеристики</h2>
+            <ul class="project-list">
+              <li>Робоча висота складів – від 8,8 м до 10 м</li>
+              <li>Стелажне зберігання товару – до 8,8 м</li>
+              <li>4 секційні ворота з доклевеллерами</li>
+              <li>Власна газова котельня потужністю 2 376 кВт</li>
+              <li>Електропостачання – 550 кВт</li>
+              <li>Артезіанська свердловина</li>
+              <li>Водопостачання та водовідведення – міські системи</li>
+              <li>Система енергоощадного освітлення</li>
+              <li>Кондиціонування офісних приміщень</li>
+              <li>Внутрішній пожежний водопровід та система димовидалення</li>
+              <li>Спеціалізоване приміщення для зарядки штабелерів</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2>Безпека та зручність</h2>
+            <ul class="project-list">
+              <li>Цілодобова охорона з відеоспостереженням і контрольно-пропускною системою</li>
+              <li>Ізольовані приміщення для незалежності від інших орендарів</li>
+              <li>Наявність нульової рампи</li>
+              <li>Простора парковка на 120 авто (50 — легкові, 70 — вантажні)</li>
+              <li>Зручні під’їзні шляхи</li>
+            </ul>
+
+            <h2>Переваги об’єкта</h2>
+            <p>
+              Комплекс поєднує функціональність класу B+ з продуманою організацією простору. Сучасні інженерні системи
+              та оптимальний розподіл зон забезпечують ефективне складування, офісну діяльність і логістику.
+            </p>
+
+            <div class="project-nav">
+              <a href="pidriasne.html" class="btn btn-outline">Назад</a>
+              <a href="zymna-voda.html" class="btn">Вперед</a>
+            </div>
+
+            <a href="index.html#projects" class="back-to-projects">← Повернутися до всіх проєктів</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> ProTec Development</span>
+    </div>
+  </footer>
+  <script src="js/utilities.js"></script>
+  <script src="js/project-page-gallery.js"></script>
+</body>
+</html>
