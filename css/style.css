@@ -605,6 +605,11 @@ a {
   position: relative;
   padding: clamp(24px, 4vh, 40px) 0 64px;
   min-height: 60vh;
+  touch-action: pan-y;
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.5s ease, transform 0.55s ease;
+  overflow: visible;
 }
 
 .projects-gallery-wrap {
@@ -614,6 +619,15 @@ a {
   --arrow-size: clamp(40px, 5vw, 56px);
 }
 
+.projects-gallery-wrap.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#projects {
+  touch-action: pan-y;
+}
+
 /* Main gallery */
 .projects-gallery {
   width: var(--container-w);
@@ -621,6 +635,8 @@ a {
   position: relative;
   height: clamp(360px, 55vh, 680px);
   overflow: hidden;
+  will-change: transform;
+  z-index: 10;
 }
 
 /* Slides */
@@ -711,6 +727,13 @@ a {
   border-radius: 999px;
   letter-spacing: 0.2px;
   color: #b91c1c;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.project-passport a.tag:hover {
+  background: rgba(227, 34, 37, 0.12);
+  border-color: rgba(227, 34, 37, 0.8);
 }
 
 /* Controls */
@@ -729,7 +752,8 @@ a {
   user-select: none;
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
   transition: background .2s ease, transform .15s ease, box-shadow .15s ease;
-  z-index: 50;
+  z-index: 200;
+  pointer-events: auto;
 }
 
 .projects-arrow:hover {
@@ -749,10 +773,12 @@ a {
 
 .projects-arrow.prev {
   left: calc(var(--side-margin) - var(--arrow-size) - 10px);
+  pointer-events: auto;
 }
 
 .projects-arrow.next {
   right: calc(var(--side-margin) - var(--arrow-size) - 10px);
+  pointer-events: auto;
 }
 
 /* Indicators */
@@ -763,6 +789,8 @@ a {
   transform: translateX(-50%);
   display: flex;
   gap: 8px;
+  z-index: 200;
+  pointer-events: none;
 }
 
 .projects-dot {
@@ -771,6 +799,8 @@ a {
   border-radius: 50%;
   background: rgba(148, 163, 184, 0.4);
   transition: transform .2s ease, background .2s ease;
+  cursor: pointer;
+  pointer-events: auto;
 }
 
 .projects-dot.active {
@@ -817,21 +847,27 @@ a {
 @media (max-width: 600px) {
   .projects-arrow {
     top: auto;
-    bottom: 0;
+    bottom: 10px;
     width: 40px;
     height: 40px;
+    z-index: 60;
   }
   .projects-arrow:active {
     transform: scale(.96);
   }
   .projects-arrow.prev {
-    left: calc(50% - 70px);
-    transform: translateX(-100%);
+    left: 80px;
+    transform: none;
   }
   .projects-arrow.next {
-    right: calc(50% - 70px);
+    right: 80px;
     left: auto;
-    transform: translateX(100%);
+    transform: none;
+  }
+  
+  .projects-dots {
+    bottom: 26px;
+    z-index: 55;
   }
 }
 
@@ -1700,4 +1736,3 @@ body {
   border-color: #e5e7eb;
   color: #111827;
 }
-

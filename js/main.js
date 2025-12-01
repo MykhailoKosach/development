@@ -401,20 +401,31 @@ if (contactForm) {
   }
 
   function move(dir) {
+    console.log("move() called with dir:", dir);
+    console.log("order before:", [...order]);
     if (dir > 0) {
       order.push(order.shift());
     } else {
       order.unshift(order.pop());
     }
+    console.log("order after:", [...order]);
+    console.log("calling layout()");
     layout();
+    console.log("layout() finished");
   }
 
   // Arrow controls
-  document.querySelectorAll(".projects-arrow").forEach((btn) =>
-    btn.addEventListener("click", () =>
-      move(parseInt(btn.dataset.dir, 10))
-    )
-  );
+  const arrowButtons = document.querySelectorAll(".projects-arrow");
+  console.log("Found arrow buttons:", arrowButtons.length);
+  arrowButtons.forEach((btn) => {
+    console.log("Adding click to arrow:", btn.className, btn.dataset.dir);
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log("Arrow clicked, dir:", btn.dataset.dir);
+      move(parseInt(btn.dataset.dir, 10));
+    });
+  });
 
   // Keyboard
   window.addEventListener("keydown", (e) => {
@@ -432,52 +443,63 @@ if (contactForm) {
     })
   );
 
-  // Touch swipe controls
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchEndX = 0;
-  let touchEndY = 0;
-  let isSwiping = false;
+  // Pointer swipe controls (horizontal only)
+  let pointerActive = false;
+  let pointerId = null;
+  let startX = 0;
+  let startY = 0;
+  let startTime = 0;
 
-  gallery.addEventListener("touchstart", (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-    touchStartY = e.changedTouches[0].screenY;
-    isSwiping = true;
-  }, { passive: true });
+  const swipeDistance = 150; // base horizontal distance to trigger
+  const projectsSection = document.getElementById("projects");
+  const swipeTarget = projectsSection || gallery.parentElement || gallery;
 
-  gallery.addEventListener("touchmove", (e) => {
-    if (!isSwiping) return;
-    touchEndX = e.changedTouches[0].screenX;
-    touchEndY = e.changedTouches[0].screenY;
-  }, { passive: true });
+  const resetPointer = () => {
+    pointerActive = false;
+    pointerId = null;
+    startX = 0;
+    startY = 0;
+    startTime = 0;
+  };
 
-  gallery.addEventListener("touchend", () => {
-    if (!isSwiping) return;
-    isSwiping = false;
-    handleSwipe();
-  });
-
-  function handleSwipe() {
-    const swipeThreshold = 50;
-    const diffX = touchStartX - touchEndX;
-    const diffY = Math.abs(touchStartY - touchEndY);
-
-    // Only process horizontal swipes (ignore vertical scrolling)
-    if (Math.abs(diffX) > swipeThreshold && diffY < swipeThreshold) {
-      if (diffX > 0) {
-        // Swipe left - next slide
-        move(1);
-      } else {
-        // Swipe right - previous slide
-        move(-1);
-      }
+  swipeTarget.addEventListener("pointerdown", (e) => {
+    // Don't capture if clicking on arrows or dots
+    if (e.target.closest('.projects-arrow') || e.target.closest('.projects-dot')) {
+      return;
     }
+    
+    pointerActive = true;
+    pointerId = e.pointerId;
+    startX = e.clientX;
+    startY = e.clientY;
+    startTime = performance.now();
+    // Capture to keep receiving events even when finger leaves child nodes
+    if (swipeTarget.setPointerCapture) {
+      swipeTarget.setPointerCapture(pointerId);
+    }
+  }, { passive: true });
 
-    touchStartX = 0;
-    touchStartY = 0;
-    touchEndX = 0;
-    touchEndY = 0;
-  }
+  swipeTarget.addEventListener("pointermove", (e) => {
+    if (!pointerActive) return;
+    // No-op: we evaluate on pointerup; move is kept for potential future live feedback.
+  }, { passive: true });
+
+  swipeTarget.addEventListener("pointerup", (e) => {
+    if (!pointerActive) return;
+    const dx = e.clientX - startX;
+    const dy = Math.abs(e.clientY - startY);
+    const dt = performance.now() - startTime;
+    const dynamicThreshold = dt < 320 ? 70 : swipeDistance;
+
+    const horizontalEnough = Math.abs(dx) > dynamicThreshold;
+    const verticalAcceptable = dy < Math.max(200, Math.abs(dx) * 0.75);
+    if (horizontalEnough && verticalAcceptable) {
+      move(dx < 0 ? 1 : -1);
+    }
+    resetPointer();
+  }, { passive: true });
+
+  swipeTarget.addEventListener("pointercancel", resetPointer, { passive: true });
 
   // Pointer-based parallax (mobile only)
   gallery.addEventListener("pointermove", (e) => {
@@ -506,6 +528,20 @@ if (contactForm) {
 
   // Initial layout
   layout();
+
+  // Fade/slide section in when entering viewport
+  const galleryWrap = document.querySelector(".projects-gallery-wrap");
+  if (projectsSection && galleryWrap) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          galleryWrap.classList.toggle("is-visible", entry.isIntersecting);
+        });
+      },
+      { threshold: 0.2 }
+    );
+    io.observe(projectsSection);
+  }
 })();
 
 // LANGUAGE TOGGLE (visual only for now)
@@ -583,7 +619,7 @@ if (langButtons.length) {
         setTimeout(() => {
           isSectionFixed = false;
           unlockScroll();
-          aboutSection.style.position = 'relative';
+          aboutSection.style.position = '';
           aboutSection.style.top = '';
           aboutSection.style.left = '';
           aboutSection.style.right = '';
@@ -629,10 +665,11 @@ if (langButtons.length) {
       const deltaY = touchStartY - touchEndY;
       const deltaX = Math.abs(touchStartX - touchEndX);
       
-      // Only respond to vertical swipes
-      if (deltaX > 20) return;
+      // Check if swipe is more vertical than horizontal (ratio-based detection)
+      const isVerticalSwipe = Math.abs(deltaY) > Math.abs(deltaX) * 0.5;
       
-      if (Math.abs(deltaY) > 20) {
+      // Minimum swipe distance
+      if (isVerticalSwipe && Math.abs(deltaY) > 30) {
         e.preventDefault();
         isAnimating = true;
         
@@ -666,8 +703,8 @@ if (langButtons.length) {
     window.addEventListener('scroll', checkSectionPosition, { passive: true });
     window.addEventListener('wheel', preventScroll, { passive: false });
     window.addEventListener('touchmove', preventScroll, { passive: false });
-    aboutSection.addEventListener('touchstart', handleTouchStart, { passive: true });
-    aboutSection.addEventListener('touchend', handleTouchEnd, { passive: false });
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd, { passive: false });
     showMobileStep(0);
     checkSectionPosition();
     
