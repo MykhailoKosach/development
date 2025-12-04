@@ -2162,38 +2162,43 @@ body {
     position: relative;
   }
 
+  .services-timeline-wrapper .container {
+    position: relative;
+  }
+
   #services {
     min-height: auto;
   }
 
   .services-timeline {
-    position: relative;
-    top: auto;
-    left: auto;
+    position: absolute;
+    top: 70px; /* Adjusted to align with first item */
+    left: 0;
+    bottom: 0;
     transform: none;
-    max-width: 100%;
-    padding: 40px 20px;
+    width: 50px;
+    padding: 0;
     height: auto;
     min-height: auto;
-    display: flex;
-    flex-direction: column;
+    display: block;
+    z-index: 1;
   }
 
   .services-timeline-base {
-    left: 20px;
+    left: 31.5px;
     right: auto;
     top: 0;
     bottom: 0;
-    width: 2px;
+    width: 1px;
     height: 100%;
     transform: none;
     position: absolute;
   }
 
   .services-timeline-fill {
-    left: 20px;
+    left: 31.5px;
     top: 0;
-    width: 2px;
+    width: 1px;
     height: 0%;
     transform: none;
     position: absolute;
