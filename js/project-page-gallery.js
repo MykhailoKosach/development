@@ -1,6 +1,6 @@
 // ================================
 // PROJECT PAGE GALLERY MODULE
-// Deck-style image gallery for individual project pages
+// 3D carousel with active image in front, others fanned behind on both sides
 // ================================
 
 (function () {
@@ -35,169 +35,163 @@
   });
 
   const slides = [...document.querySelectorAll(".gallery-slide")];
-  let order = slides.map((_, i) => i);
-  const parallax = { t: 0 };
+  let currentIndex = 0;
 
   function layout() {
     const w = gallery.clientWidth;
+    const h = gallery.clientHeight;
     const n = slides.length;
     if (!n) return;
 
     const isMobile = w < 600;
+    const cardW = isMobile ? Math.max(260, Math.min(w * 0.8, 380)) : Math.min(w * 0.65, 800);
+    const centerLeft = (w - cardW) / 2;
 
-    if (isMobile) {
-      // Mobile: Deck layout (same as main page)
-      const cardW = w * 0.86;
-      const cardH = gallery.clientHeight;
-      const activeLeft = (w - cardW) / 2;
-      const spread = cardW * 0.15;
+    slides.forEach((slide, i) => {
+      // Calculate infinite loop distance
+      let distance = i - currentIndex;
+      
+      // Wrap around for infinite loop (find shortest path)
+      if (distance > n / 2) distance -= n;
+      if (distance < -n / 2) distance += n;
+      
+      const absDistance = Math.abs(distance);
+      
+      // Position all cards centered by default
+      slide.style.left = `${centerLeft}px`;
+      slide.style.width = `${cardW}px`;
+      slide.style.height = `${h}px`;
 
-      slides.forEach((s, idx) => {
-        const pos = order.indexOf(idx);
-        const isActive = pos === 0;
+      // Only show active card + 2 cards on each side
+      if (absDistance > 2) {
+        slide.style.opacity = 0;
+        slide.style.pointerEvents = 'none';
+        slide.style.zIndex = -1;
+        return;
+      }
 
-        let left = activeLeft;
-        let translateX = 0;
-        let scale = 1;
-        let zIndex = n - pos;
-        let opacity = 1;
-        let brightness = 1;
+      if (distance === 0) {
+        // Active card - front and center
+        slide.style.transform = `translate3d(0, 0, 0) scale(1) rotateY(0deg)`;
+        slide.style.zIndex = 100;
+        slide.style.opacity = 1;
+        slide.style.filter = `brightness(1)`;
+        slide.style.pointerEvents = 'auto';
+      } else {
+        // Cards fan out on their respective sides (left stays left, right stays right)
+        const isLeft = distance < 0;
+        const stackPos = absDistance; // 1 or 2
+        
+        // Calculate offsets - each position gets its own offset
+        const offsetX = isMobile 
+          ? (isLeft ? -40 - (stackPos -1) * 40 : 40 + (stackPos - 1) * 40)
+          : (isLeft ? -120 - (stackPos - 1) * 50 : 120 + (stackPos - 1) * 50);
+        
+        const offsetY = isMobile 
+          ? -8 - (stackPos - 1) * 12 
+          : -15 - (stackPos - 1) * 18;
+        
+        const rotation = isMobile
+          ? (isLeft ? 28 + (stackPos - 1) * 8 : -28 - (stackPos - 1) * 8)
+          : (isLeft ? 38 + (stackPos - 1) * 10 : -38 - (stackPos - 1) * 10);
+        
+        const scale = Math.max(0.7, 0.93 - (stackPos - 1) * 0.1);
+        const brightness = Math.max(0.55, 0.88 - (stackPos - 1) * 0.15);
 
-        if (pos === 1) {
-          translateX = spread;
-          scale = 0.94;
-          brightness = 0.88;
-        } else if (pos === 2) {
-          translateX = spread * 1.4;
-          scale = 0.88;
-          brightness = 0.76;
-          opacity = 0.9;
-        } else if (pos > 2) {
-          translateX = spread * 1.7;
-          scale = 0.84;
-          brightness = 0.7;
-          opacity = 0;
-        }
+        slide.style.transform = `translate3d(${offsetX}px, ${offsetY}px, ${-stackPos * 50}px) scale(${scale}) rotateY(${rotation}deg)`;
+        slide.style.zIndex = 100 - stackPos;
+        slide.style.opacity = 1;
+        slide.style.filter = `brightness(${brightness})`;
+        slide.style.pointerEvents = 'auto';
+      }
+    });
 
-        s.style.left = `${left}px`;
-        s.style.width = `${cardW}px`;
-        s.style.height = `${cardH}px`;
-        s.style.transform = `translateX(${translateX + parallax.t * -20}px) scale(${scale})`;
-        s.style.zIndex = zIndex;
-        s.style.opacity = opacity;
-        s.style.filter = `brightness(${brightness})`;
-      });
-    } else {
-      // Desktop: Deck layout
-      const cardW = Math.min(w * 0.72, 900);
-      const cardH = gallery.clientHeight;
-      const activeLeft = (w - cardW) / 2;
-      const spread = Math.min(cardW * 0.28, 200);
-
-      slides.forEach((s, idx) => {
-        const pos = order.indexOf(idx);
-        const isActive = pos === 0;
-
-        let left = activeLeft;
-        let scale = 1;
-        let zIndex = n - pos;
-        let opacity = 1;
-        let brightness = 1;
-
-        if (pos === 1) {
-          left = activeLeft + spread;
-          scale = 0.92;
-          brightness = 0.88;
-        } else if (pos === 2) {
-          left = activeLeft + spread * 1.5;
-          scale = 0.86;
-          brightness = 0.76;
-          opacity = 0.9;
-        } else if (pos > 2) {
-          left = activeLeft + spread * 1.8;
-          scale = 0.82;
-          brightness = 0.7;
-          opacity = 0;
-        }
-
-        s.style.left = `${left}px`;
-        s.style.width = `${cardW}px`;
-        s.style.height = `${cardH}px`;
-        s.style.transform = `scale(${scale}) translateX(${parallax.t * -30}px)`;
-        s.style.zIndex = zIndex;
-        s.style.opacity = opacity;
-        s.style.filter = `brightness(${brightness})`;
-      });
-    }
-  }
-
-  function updateDots() {
-    const allDots = [...dots.querySelectorAll(".gallery-dot")];
-    allDots.forEach((d, i) => {
-      d.classList.toggle("active", i === order[0]);
+    // Update dots
+    [...dots.children].forEach((dot, i) => {
+      dot.classList.toggle("active", i === currentIndex);
     });
   }
 
-  function cycle(direction = 1) {
-    if (direction > 0) {
-      order.push(order.shift());
-    } else {
-      order.unshift(order.pop());
-    }
+  function goToSlide(index) {
+    currentIndex = (index + images.length) % images.length;
     layout();
-    updateDots();
+  }
+
+  function next() {
+    goToSlide(currentIndex + 1);
+  }
+
+  function prev() {
+    goToSlide(currentIndex - 1);
   }
 
   // Event listeners
-  if (prevBtn) prevBtn.addEventListener("click", () => cycle(-1));
-  if (nextBtn) nextBtn.addEventListener("click", () => cycle(1));
+  if (prevBtn) prevBtn.addEventListener("click", prev);
+  if (nextBtn) nextBtn.addEventListener("click", next);
 
   dots.addEventListener("click", (e) => {
     const dot = e.target.closest(".gallery-dot");
     if (!dot) return;
-    const targetIdx = parseInt(dot.dataset.i, 10);
-    const currentIdx = order[0];
-    if (targetIdx === currentIdx) return;
-
-    const dist = (targetIdx - currentIdx + images.length) % images.length;
-    const dir = dist <= images.length / 2 ? 1 : -1;
-    const steps = dir > 0 ? dist : images.length - dist;
-
-    for (let i = 0; i < steps; i++) cycle(dir);
+    goToSlide(parseInt(dot.dataset.i, 10));
   });
 
   // Touch/swipe support
-  let swipeTarget = document.querySelector(".project-gallery-wrap");
-  if (!swipeTarget) swipeTarget = gallery;
-  let startX = 0,
-    startY = 0,
-    isDragging = false;
+  let swipeTarget = document.querySelector(".project-gallery-wrap") || gallery;
+  let startX = 0;
+  let startY = 0;
+  let isDragging = false;
 
   swipeTarget.addEventListener("pointerdown", (e) => {
-    // Ignore if clicking on arrows or dots
-    if (
-      e.target.closest(".gallery-arrow") ||
-      e.target.closest(".gallery-dot")
-    ) {
+    if (e.target.closest(".gallery-arrow") || e.target.closest(".gallery-dot")) {
       return;
     }
-
     startX = e.clientX;
     startY = e.clientY;
     isDragging = true;
     swipeTarget.setPointerCapture(e.pointerId);
-    parallax.t = 0;
   });
 
   swipeTarget.addEventListener("pointermove", (e) => {
     if (!isDragging) return;
-    const dx = e.clientX - startX;
-    parallax.t = Math.max(-1, Math.min(1, dx / 100));
-    layout();
+    e.preventDefault();
   });
 
   swipeTarget.addEventListener("pointerup", (e) => {
     if (!isDragging) return;
+    isDragging = false;
+    swipeTarget.releasePointerCapture(e.pointerId);
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    const threshold = 50;
+
+    // Swipe horizontally
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > threshold) {
+      if (dx > 0) {
+        prev();
+      } else {
+        next();
+      }
+    }
+  });
+
+  swipeTarget.addEventListener("pointercancel", (e) => {
+    if (isDragging) {
+      isDragging = false;
+      swipeTarget.releasePointerCapture(e.pointerId);
+    }
+  });
+
+  // Keyboard navigation
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") next();
+    if (e.key === "ArrowLeft") prev();
+  });
+
+  // Initial layout
+  window.addEventListener("resize", layout);
+  layout();
+
     isDragging = false;
 
     const dx = e.clientX - startX;
@@ -209,7 +203,6 @@
 
     parallax.t = 0;
     layout();
-  });
 
   swipeTarget.addEventListener("pointercancel", () => {
     isDragging = false;

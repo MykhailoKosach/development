@@ -1906,6 +1906,7 @@ body {
   height: clamp(400px, 50vh, 600px);
   overflow: visible;
   touch-action: pan-y;
+  perspective: 1500px;
 }
 
 .gallery-slide {
@@ -1922,6 +1923,8 @@ body {
               opacity 0.5s ease;
   background: #1f2937;
   cursor: grab;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 
 .gallery-slide:active {
