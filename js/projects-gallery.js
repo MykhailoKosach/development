@@ -92,109 +92,131 @@
   });
 
   const slides = [...document.querySelectorAll(".projects-slide")];
-  let order = slides.map((_, i) => i);
-  const parallax = { t: 0 };
+  let currentIndex = 0;
 
   function layout() {
     const w = gallery.clientWidth;
+    const h = gallery.clientHeight;
     const n = slides.length;
     if (!n) return;
 
     if (w < 600) {
-      // Mobile layout
-      const peek = Math.max(20, Math.min(30, w * 0.06));
-      const activeW = Math.max(220, Math.min(w - 2 * peek, 500));
-      const center = (w - activeW) / 2;
-      const prevIdx = order[n - 1];
-      const nextIdx = order[1];
+      // Mobile: 3D carousel with cards fanned on both sides (same as project-page-gallery)
+      const cardW = Math.max(260, Math.min(w * 0.8, 380));
+      const centerLeft = (w - cardW) / 2;
 
-      slides.forEach((el, i) => {
-        const pos = order.indexOf(i);
-        el.style.pointerEvents = "none";
+      slides.forEach((slide, i) => {
+        // Calculate infinite loop distance
+        let distance = i - currentIndex;
+        
+        // Wrap around for infinite loop (find shortest path)
+        if (distance > n / 2) distance -= n;
+        if (distance < -n / 2) distance += n;
+        
+        const absDistance = Math.abs(distance);
+        
+        slide.style.left = `${centerLeft}px`;
+        slide.style.width = `${cardW}px`;
+        slide.style.height = `${h}px`;
 
-        if (pos === 0) {
-          const dx = parallax.t * 8;
-          el.style.left = `${center + dx}px`;
-          el.style.width = `${activeW}px`;
-          el.style.transform = "scale(1)";
-          el.style.filter = "grayscale(0) saturate(1)";
-          el.style.zIndex = 100;
-          el.style.opacity = 1;
-          el.style.pointerEvents = "auto";
-        } else if (i === nextIdx) {
-          const dx = parallax.t * 18;
-          el.style.left = `${w - peek + dx}px`;
-          el.style.width = `${activeW}px`;
-          el.style.transform = "scale(0.96)";
-          el.style.filter = "grayscale(1) brightness(.9)";
-          el.style.zIndex = 90;
-          el.style.opacity = 1;
-          el.style.pointerEvents = "auto";
-        } else if (i === prevIdx) {
-          const dx = -parallax.t * 18;
-          el.style.left = `${-activeW + peek + dx}px`;
-          el.style.width = `${activeW}px`;
-          el.style.transform = "scale(0.96)";
-          el.style.filter = "grayscale(1) brightness(.9)";
-          el.style.zIndex = 90;
-          el.style.opacity = 1;
-          el.style.pointerEvents = "auto";
+        // Only show active card + 2 cards on each side
+        if (absDistance > 2) {
+          slide.style.opacity = 0;
+          slide.style.pointerEvents = 'none';
+          slide.style.zIndex = -1;
+          slide.style.transform = "translate3d(0, 0, 0) scale(0.8) rotateY(0deg)";
+          slide.style.filter = "brightness(0.7)";
+          return;
+        }
+
+        if (distance === 0) {
+          // Active card - front and center
+          slide.style.transform = `translate3d(0, 0, 0) scale(1) rotateY(0deg)`;
+          slide.style.zIndex = 100;
+          slide.style.opacity = 1;
+          slide.style.filter = `brightness(1)`;
+          slide.style.pointerEvents = 'auto';
         } else {
-          el.style.left = `${center}px`;
-          el.style.width = `${activeW}px`;
-          el.style.transform = "scale(0.9)";
-          el.style.filter = "grayscale(1) brightness(.7)";
-          el.style.zIndex = 1;
-          el.style.opacity = 0;
+          // Cards fan out on their respective sides
+          const isLeft = distance < 0;
+          const stackPos = absDistance;
+          
+          const offsetX = isLeft ? -40 - (stackPos - 1) * 40 : 40 + (stackPos - 1) * 40;
+          const offsetY = -8 - (stackPos - 1) * 12;
+          const rotation = isLeft ? 28 + (stackPos - 1) * 8 : -28 - (stackPos - 1) * 8;
+          const scale = Math.max(0.7, 0.93 - (stackPos - 1) * 0.1);
+          const brightness = Math.max(0.55, 0.88 - (stackPos - 1) * 0.15);
+
+          slide.style.transform = `translate3d(${offsetX}px, ${offsetY}px, ${-stackPos * 50}px) scale(${scale}) rotateY(${rotation}deg)`;
+          slide.style.zIndex = 100 - stackPos;
+          slide.style.opacity = 1;
+          slide.style.filter = `brightness(${brightness})`;
+          slide.style.pointerEvents = 'auto';
         }
       });
 
       [...dots.children].forEach((d, idx) =>
-        d.classList.toggle("active", order[0] === idx)
+        d.classList.toggle("active", idx === currentIndex)
       );
       return;
     }
 
     // Desktop deck layout
-    let r = w <= 900 ? 0.66 : 0.7;
-    let activeW = Math.min(Math.max(260, w * r), w - 12);
-    const peek = Math.max(56, Math.min(160, w * 0.12));
-    const nStack = Math.max(0, slides.length - 1);
+    let order = slides.map((_, i) => i);
+    // Rotate order array to match currentIndex
+    for (let i = 0; i < currentIndex; i++) {
+      order.push(order.shift());
+    }
+
+    // Account for arrow space: arrows are at side-margin - arrow-size - 10px
+    // side-margin is 10vw, arrow-size is ~56px max, so we need padding
+    const arrowSpace = Math.max(70, w * 0.1); // Reserve space for arrows on each side
+    const usableWidth = w - (arrowSpace * 2);
+
+    let r = w <= 900 ? 0.55 : 0.58;
+    let activeW = Math.min(Math.max(220, usableWidth * r), usableWidth - 12);
+    const peek = Math.max(45, Math.min(120, usableWidth * 0.1));
+    const visibleCards = Math.min(slides.length - 1, 4); // Show up to 4 cards in stack
 
     let stackStart = activeW - peek;
-    let minStep = Math.max(12, Math.min(26, w * 0.03));
-    let maxStep = Math.max(28, Math.min(56, w * 0.06));
-    let minStackW = Math.max(140, Math.min(260, w * 0.28));
+    let minStep = Math.max(10, Math.min(22, usableWidth * 0.025));
+    let maxStep = Math.max(24, Math.min(45, usableWidth * 0.05));
+    let minStackW = Math.max(120, Math.min(220, usableWidth * 0.24));
 
-    let s = nStack > 1 ? (w - stackStart - minStackW) / (nStack - 1) : maxStep;
+    let s = visibleCards > 1 ? (usableWidth - stackStart - minStackW) / (visibleCards - 1) : maxStep;
     s = Math.max(minStep, Math.min(maxStep, isFinite(s) ? s : maxStep));
-    let stackW = w - stackStart - (nStack - 1) * s;
+    let stackW = usableWidth - stackStart - (visibleCards - 1) * s;
 
     if (stackW < minStackW) {
       const deficit = minStackW - stackW;
-      activeW = Math.max(220, activeW - deficit - 8);
+      activeW = Math.max(200, activeW - deficit - 8);
       stackStart = activeW - peek;
-      s = nStack > 1 ? (w - stackStart - minStackW) / (nStack - 1) : maxStep;
+      s = visibleCards > 1 ? (usableWidth - stackStart - minStackW) / (visibleCards - 1) : maxStep;
       s = Math.max(minStep, Math.min(maxStep, isFinite(s) ? s : maxStep));
-      stackW = w - stackStart - (nStack - 1) * s;
+      stackW = usableWidth - stackStart - (visibleCards - 1) * s;
     }
 
-    stackW = Math.max(minStackW, Math.min(stackW, Math.max(200, activeW * 0.9)));
+    stackW = Math.max(minStackW, Math.min(stackW, Math.max(180, activeW * 0.88)));
+
+    // Center the deck in the available space
+    const totalWidth = stackStart + stackW + (visibleCards - 1) * s;
+    const leftOffset = arrowSpace + (usableWidth - totalWidth) / 2;
 
     slides.forEach((el, i) => {
       const pos = order.indexOf(i);
       el.style.pointerEvents = "auto";
+      el.style.height = "100%";
 
       if (pos === 0) {
-        el.style.left = `0px`;
+        el.style.left = `${leftOffset}px`;
         el.style.width = `${activeW}px`;
         el.style.transform = "scale(1)";
         el.style.filter = "grayscale(0) saturate(1)";
         el.style.zIndex = 100;
         el.style.opacity = 1;
-      } else {
+      } else if (pos <= visibleCards) {
         const k = pos - 1;
-        const left = stackStart + k * s;
+        const left = leftOffset + stackStart + k * s;
         const scale = Math.max(0.82, 0.96 - k * 0.04);
         el.style.left = `${left}px`;
         el.style.width = `${stackW}px`;
@@ -202,21 +224,42 @@
         el.style.filter = "grayscale(0.1) brightness(.96)";
         el.style.zIndex = 90 - k;
         el.style.opacity = 1;
+      } else {
+        // Hidden cards beyond visible stack
+        el.style.left = `${leftOffset + stackStart}px`;
+        el.style.width = `${stackW}px`;
+        el.style.transform = "scale(0.8)";
+        el.style.filter = "grayscale(0.3) brightness(.9)";
+        el.style.zIndex = 1;
+        el.style.opacity = 0;
+        el.style.pointerEvents = "none";
       }
     });
 
     [...dots.children].forEach((d, idx) =>
-      d.classList.toggle("active", order[0] === idx)
+      d.classList.toggle("active", idx === currentIndex)
     );
+  }
+
+  function goToSlide(index) {
+    currentIndex = (index + data.length) % data.length;
+    layout();
+  }
+
+  function next() {
+    goToSlide(currentIndex + 1);
+  }
+
+  function prev() {
+    goToSlide(currentIndex - 1);
   }
 
   function move(dir) {
     if (dir > 0) {
-      order.push(order.shift());
+      next();
     } else {
-      order.unshift(order.pop());
+      prev();
     }
-    layout();
   }
 
   // Arrow controls
@@ -237,10 +280,7 @@
   // Dot navigation
   [...dots.children].forEach((d) =>
     d.addEventListener("click", () => {
-      const idx = parseInt(d.dataset.i, 10);
-      const pos = order.indexOf(idx);
-      for (let t = 0; t < pos; t++) order.push(order.shift());
-      layout();
+      goToSlide(parseInt(d.dataset.i, 10));
     })
   );
 
@@ -302,27 +342,13 @@
 
   swipeTarget.addEventListener("pointercancel", resetPointer, { passive: true });
 
-  // Parallax on mobile
-  gallery.addEventListener("pointermove", (e) => {
-    const w = gallery.clientWidth;
-    if (w >= 600) return;
-    const rect = gallery.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / Math.max(1, w);
-    parallax.t = Math.max(-0.5, Math.min(0.5, x - 0.5));
-    layout();
-  });
-
-  gallery.addEventListener("pointerleave", () => {
-    parallax.t = 0;
-    layout();
-  });
+  // Parallax removed for mobile (no longer needed with 3D carousel)
 
   // Resize handler
   let t;
   window.addEventListener("resize", () => {
     clearTimeout(t);
     t = setTimeout(() => {
-      parallax.t = 0;
       layout();
     }, 80);
   });
