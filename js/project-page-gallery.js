@@ -44,67 +44,126 @@
     if (!n) return;
 
     const isMobile = w < 600;
-    const cardW = isMobile ? Math.max(260, Math.min(w * 0.8, 380)) : Math.min(w * 0.65, 800);
-    const centerLeft = (w - cardW) / 2;
 
-    slides.forEach((slide, i) => {
-      // Calculate infinite loop distance
-      let distance = i - currentIndex;
-      
-      // Wrap around for infinite loop (find shortest path)
-      if (distance > n / 2) distance -= n;
-      if (distance < -n / 2) distance += n;
-      
-      const absDistance = Math.abs(distance);
-      
-      // Position all cards centered by default
-      slide.style.left = `${centerLeft}px`;
-      slide.style.width = `${cardW}px`;
-      slide.style.height = `${h}px`;
+    if (isMobile) {
+      // Mobile: 3D carousel with cards fanned on both sides
+      const cardW = Math.max(260, Math.min(w * 0.8, 380));
+      const centerLeft = (w - cardW) / 2;
 
-      // Only show active card + 2 cards on each side
-      if (absDistance > 2) {
-        slide.style.opacity = 0;
-        slide.style.pointerEvents = 'none';
-        slide.style.zIndex = -1;
-        return;
+      slides.forEach((slide, i) => {
+        // Calculate infinite loop distance
+        let distance = i - currentIndex;
+        
+        // Wrap around for infinite loop (find shortest path)
+        if (distance > n / 2) distance -= n;
+        if (distance < -n / 2) distance += n;
+        
+        const absDistance = Math.abs(distance);
+        
+        slide.style.left = `${centerLeft}px`;
+        slide.style.width = `${cardW}px`;
+        slide.style.height = `${h}px`;
+
+        // Only show active card + 2 cards on each side
+        if (absDistance > 2) {
+          slide.style.opacity = 0;
+          slide.style.pointerEvents = 'none';
+          slide.style.zIndex = -1;
+          return;
+        }
+
+        if (distance === 0) {
+          // Active card - front and center
+          slide.style.transform = `translate3d(0, 0, 0) scale(1) rotateY(0deg)`;
+          slide.style.zIndex = 100;
+          slide.style.opacity = 1;
+          slide.style.filter = `brightness(1)`;
+          slide.style.pointerEvents = 'auto';
+        } else {
+          // Cards fan out on their respective sides
+          const isLeft = distance < 0;
+          const stackPos = absDistance;
+          
+          const offsetX = isLeft ? -40 - (stackPos - 1) * 40 : 40 + (stackPos - 1) * 40;
+          const offsetY = -8 - (stackPos - 1) * 12;
+          const rotation = isLeft ? 28 + (stackPos - 1) * 8 : -28 - (stackPos - 1) * 8;
+          const scale = Math.max(0.7, 0.93 - (stackPos - 1) * 0.1);
+          const brightness = Math.max(0.55, 0.88 - (stackPos - 1) * 0.15);
+
+          slide.style.transform = `translate3d(${offsetX}px, ${offsetY}px, ${-stackPos * 50}px) scale(${scale}) rotateY(${rotation}deg)`;
+          slide.style.zIndex = 100 - stackPos;
+          slide.style.opacity = 1;
+          slide.style.filter = `brightness(${brightness})`;
+          slide.style.pointerEvents = 'auto';
+        }
+      });
+    } else {
+      // Desktop: Deck layout (like main page projects gallery)
+      let r = w <= 900 ? 0.66 : 0.7;
+      let activeW = Math.min(Math.max(260, w * r), w - 12);
+      const peek = Math.max(56, Math.min(160, w * 0.12));
+      const visibleCards = Math.min(n - 1, 4); // Show up to 4 cards in stack
+
+      let stackStart = activeW - peek;
+      let minStep = Math.max(12, Math.min(26, w * 0.03));
+      let maxStep = Math.max(28, Math.min(56, w * 0.06));
+      let minStackW = Math.max(140, Math.min(260, w * 0.28));
+
+      let s = visibleCards > 1 ? (w - stackStart - minStackW) / (visibleCards - 1) : maxStep;
+      s = Math.max(minStep, Math.min(maxStep, isFinite(s) ? s : maxStep));
+      let stackW = w - stackStart - (visibleCards - 1) * s;
+
+      if (stackW < minStackW) {
+        const deficit = minStackW - stackW;
+        activeW = Math.max(220, activeW - deficit - 8);
+        stackStart = activeW - peek;
+        s = visibleCards > 1 ? (w - stackStart - minStackW) / (visibleCards - 1) : maxStep;
+        s = Math.max(minStep, Math.min(maxStep, isFinite(s) ? s : maxStep));
+        stackW = w - stackStart - (visibleCards - 1) * s;
       }
 
-      if (distance === 0) {
-        // Active card - front and center
-        slide.style.transform = `translate3d(0, 0, 0) scale(1) rotateY(0deg)`;
-        slide.style.zIndex = 100;
-        slide.style.opacity = 1;
-        slide.style.filter = `brightness(1)`;
-        slide.style.pointerEvents = 'auto';
-      } else {
-        // Cards fan out on their respective sides (left stays left, right stays right)
-        const isLeft = distance < 0;
-        const stackPos = absDistance; // 1 or 2
-        
-        // Calculate offsets - each position gets its own offset
-        const offsetX = isMobile 
-          ? (isLeft ? -40 - (stackPos -1) * 40 : 40 + (stackPos - 1) * 40)
-          : (isLeft ? -120 - (stackPos - 1) * 50 : 120 + (stackPos - 1) * 50);
-        
-        const offsetY = isMobile 
-          ? -8 - (stackPos - 1) * 12 
-          : -15 - (stackPos - 1) * 18;
-        
-        const rotation = isMobile
-          ? (isLeft ? 28 + (stackPos - 1) * 8 : -28 - (stackPos - 1) * 8)
-          : (isLeft ? 38 + (stackPos - 1) * 10 : -38 - (stackPos - 1) * 10);
-        
-        const scale = Math.max(0.7, 0.93 - (stackPos - 1) * 0.1);
-        const brightness = Math.max(0.55, 0.88 - (stackPos - 1) * 0.15);
+      stackW = Math.max(minStackW, Math.min(stackW, Math.max(200, activeW * 0.9)));
 
-        slide.style.transform = `translate3d(${offsetX}px, ${offsetY}px, ${-stackPos * 50}px) scale(${scale}) rotateY(${rotation}deg)`;
-        slide.style.zIndex = 100 - stackPos;
-        slide.style.opacity = 1;
-        slide.style.filter = `brightness(${brightness})`;
-        slide.style.pointerEvents = 'auto';
-      }
-    });
+      slides.forEach((slide, i) => {
+        // Calculate position relative to current
+        let relPos = i - currentIndex;
+        if (relPos < 0) relPos += n;
+
+        slide.style.pointerEvents = "auto";
+        slide.style.height = `${h}px`;
+
+        if (relPos === 0) {
+          // Active card
+          slide.style.left = `0px`;
+          slide.style.width = `${activeW}px`;
+          slide.style.transform = "scale(1)";
+          slide.style.filter = "grayscale(0) saturate(1)";
+          slide.style.zIndex = 100;
+          slide.style.opacity = 1;
+        } else if (relPos <= visibleCards) {
+          // Visible stacked cards
+          const k = relPos - 1;
+          const left = stackStart + k * s;
+          const scale = Math.max(0.82, 0.96 - k * 0.04);
+          
+          slide.style.left = `${left}px`;
+          slide.style.width = `${stackW}px`;
+          slide.style.transform = `scale(${scale})`;
+          slide.style.filter = "grayscale(0.1) brightness(.96)";
+          slide.style.zIndex = 90 - k;
+          slide.style.opacity = 1;
+        } else {
+          // Hidden cards
+          slide.style.left = `${stackStart}px`;
+          slide.style.width = `${stackW}px`;
+          slide.style.transform = "scale(0.8)";
+          slide.style.filter = "grayscale(0.3) brightness(.9)";
+          slide.style.zIndex = 1;
+          slide.style.opacity = 0;
+          slide.style.pointerEvents = "none";
+        }
+      });
+    }
 
     // Update dots
     [...dots.children].forEach((dot, i) => {
