@@ -76,14 +76,36 @@
  <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
 
   <main>
-    <!-- HERO: INTERACTIVE MAP -->
-    <section class="hero" id="hero">
-      <div id="map" class="hero-map-desktop"></div>
-      <div class="hero-map-placeholder">
-        <img src="https://picsum.photos/800/600" alt="Lviv region map" />
-        <div class="map-placeholder-overlay">
+    <!-- HERO: VIDEO + MAP -->
+    <section class="hero">
+      <video class="hero-video" autoplay muted loop playsinline>
+        <!-- Replace src with real video -->
+        <source src="media/hero-placeholder.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="container hero-content">
+        <div class="hero-text">
           <h1>Склади класу A/A+ у ключових локаціях Львівського регіону</h1>
-          <p>Від ідеї до експлуатації — повний цикл девелопменту промислової нерухомості</p>
+          <p>Від ідеї до експлуатації — повний цикл девелопменту промислової нерухомості.</p>
+        </div>
+
+        <div class="hero-map">
+          <div class="map-placeholder">
+            <!-- Simple “map” mock with clickable points -->
+            <div class="map-point" data-location="riasne" style="top: 35%; left: 35%;">Рясне</div>
+            <div class="map-point" data-location="pidriasne" style="top: 45%; left: 60%;">Підрясне</div>
+            <div class="map-point" data-location="zymna" style="top: 50%; left: 40%;">Зимна Вода</div>
+            <div class="map-point" data-location="drohobych" style="top: 70%; left: 25%;">Дрогобич</div>
+
+            <div class="map-popup" id="mapPopup">
+              <button class="map-popup-close" id="mapPopupClose" aria-label="Close popup">×</button>
+              <div class="map-popup-content">
+                <h3 id="mapPopupTitle"></h3>
+                <p id="mapPopupText"></p>
+                <a id="mapPopupLink" href="#" class="btn btn-small">Детальніше</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

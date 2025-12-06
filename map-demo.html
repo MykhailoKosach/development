@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Globe to Lviv Region Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Mapbox GL JS CSS -->
+  <link
+    href="https://api.mapbox.com/mapbox-gl-js/v3.16.0/mapbox-gl.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: #050608;
+      color: #f5f5f5;
+      line-height: 1.5;
+    }
+
+    .hero {
+      position: relative;
+      height: 200vh; /* scroll space for the animation */
+    }
+
+    #map {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+    }
+
+    .hero-overlay {
+      position: fixed;
+      inset: 0 0 auto 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      pointer-events: none;
+      padding-top: 3rem;
+      z-index: 10;
+    }
+
+    .hero-overlay-inner {
+      pointer-events: auto;
+      background: rgba(5, 6, 8, 0.7);
+      backdrop-filter: blur(16px);
+      border-radius: 999px;
+      padding: 0.75rem 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.9rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff6b6b;
+      box-shadow: 0 0 12px rgba(255, 107, 107, 0.8);
+    }
+
+    .content {
+      padding: 4rem 1.5rem 6rem;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 3vw, 2.8rem);
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin-bottom: 0.75rem;
+      color: #c2c5d0;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9em;
+      background: #111217;
+      padding: 0.05em 0.35em;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <section class="hero" id="hero">
+    <div id="map"></div>
+
+    <div class="hero-overlay">
+      <div class="hero-overlay-inner">
+        <span class="dot"></span>
+        <span>Scroll to fly from Earth to Lviv region and reveal warehouses</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <h1>Scroll-driven globe → Lviv region → warehouse markers</h1>
+    <p>
+      This demo uses <code>mapbox-gl-js</code> with globe projection. As you scroll
+      the first section, the camera rotates and zooms from a global view into the
+      entire Lviv oblast.
+    </p>
+    <p>
+      At the end, the view is locked (no drag, zoom, or rotation). City names are
+      shown only for Lviv region cities you define, and the warehouse locations for
+      <strong>Рясне, Підрясне, Зимна Вода, Дрогобич</strong> are marked with dots.
+    </p>
+  </section>
+
+  <!-- Mapbox GL JS -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.16.0/mapbox-gl.js"></script>
+
+  <script>
+    // 1. BASIC MAP SETUP
+    mapboxgl.accessToken = "pk.eyJ1IjoibXlraGFpbG9rb3NhY2giLCJhIjoiY21pcTB3NHN6MDh4MTNlczh2bm9pdG1jdyJ9.JR_xYNvPBF70Gg5JF9ASTw";
+
+    const map = new mapboxgl.Map({
+      container: "map",
+      style: "mapbox://styles/mapbox/light-v11", // simple base we strip down
+      projection: "globe",
+      center: [0, 20],
+      zoom: 1.4,
+      pitch: 0,
+      bearing: 0,
+      antialias: true
+    });
+
+    // 2. CAMERA STATES
+    const cameraStart = {
+      center: [0, 20],
+      zoom: 1.4,
+      pitch: 0,
+      bearing: 0
+    };
+
+    // Approx center of Lviv oblast & zoom that fits the whole region
+    const cameraEnd = {
+      center: [24.25, 49.75],
+      zoom: 7.2,
+      pitch: 0,
+      bearing: 0,
+    };
+
+    // Bounds covering Lviv oblast (approx)
+    const lvivBounds = [
+      [22.9, 48.9], // SW [lng, lat]
+      [25.6, 50.6]  // NE
+    ];
+
+    // Warehouse locations
+    const warehouses = {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          properties: { name: "Рясне" },
+          geometry: {
+            type: "Point",
+            coordinates: [23.9023375, 49.872912]
+          }
+        },
+        {
+          type: "Feature",
+          properties: { name: "Підрясне" },
+          geometry: {
+            type: "Point",
+            coordinates: [23.884802, 49.8738035]
+          }
+        },
+        {
+          type: "Feature",
+          properties: { name: "Зимна Вода" },
+          geometry: {
+            type: "Point",
+            coordinates: [23.8856375, 49.826705]
+          }
+        },
+        {
+          type: "Feature",
+          properties: { name: "Дрогобич" },
+          geometry: {
+            type: "Point",
+            coordinates: [23.51006, 49.35316]
+          }
+        }
+      ]
+    };
+
+    // Custom city labels ONLY for Lviv region
+    const lvivCities = {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          properties: { name: "Львів", size: "large" },
+          geometry: {
+            type: "Point",
+            coordinates: [24.0316, 49.8419]
+          }
+        },
+        {
+          type: "Feature",
+          properties: { name: "Рясне", size: "medium" },
+          geometry: {
+            type: "Point",
+            coordinates: [23.9023375, 49.872912]
+          }
+        },
+        {
+          type: "Feature",
+          properties: { name: "Підрясне", size: "medium" },
+          geometry: {
+            type: "Point",
+            coordinates: [23.884802, 49.8738035]
+          }
+        },
+        {
+          type: "Feature",
+          properties: { name: "Зимна Вода", size: "medium" },
+          geometry: {
+            type: "Point",
+            coordinates: [23.8856375, 49.826705]
+          }
+        },
+        {
+          type: "Feature",
+          properties: { name: "Дрогобич", size: "medium" },
+          geometry: {
+            type: "Point",
+            coordinates: [23.51006, 49.35316]
+          }
+        }
+        // You can add more Lviv oblast cities here if you want
+      ]
+    };
+
+    // Helpers
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const clamp01 = (v) => Math.max(0, Math.min(1, v));
+
+    let animationLocked = false; // once final camera reached
+
+    map.on("load", () => {
+      // Make everything minimal: white background, only borders, no labels
+      if (map.setFog) {
+        map.setFog(null);
+      }
+
+      const style = map.getStyle();
+      const layers = style.layers || [];
+
+      // Make background white
+      const backgroundLayer = layers.find(l => l.type === "background");
+      if (backgroundLayer) {
+        map.setPaintProperty(backgroundLayer.id, "background-color", "#ffffff");
+      }
+
+      // Keep only border layers, hide everything else
+      const keepLayers = [
+        "admin-0-boundary",
+        "admin-0-boundary-disputed",
+        "admin-1-boundary"
+      ];
+
+      layers.forEach(layer => {
+        if (layer.type === "background") return;
+        if (!keepLayers.includes(layer.id)) {
+          try {
+            map.setLayoutProperty(layer.id, "visibility", "none");
+          } catch (e) {
+            // some layers may not have layout/visibility
+          }
+        }
+      });
+
+      // Add warehouses as circle markers
+      map.addSource("warehouses", {
+        type: "geojson",
+        data: warehouses
+      });
+
+      map.addLayer({
+        id: "warehouses-layer",
+        type: "circle",
+        source: "warehouses",
+        paint: {
+          "circle-radius": 6,
+          "circle-color": "#ff6b6b",
+          "circle-stroke-width": 1.5,
+          "circle-stroke-color": "#ffffff"
+        }
+      });
+
+      // Popups on click
+      map.on("click", "warehouses-layer", (e) => {
+        const feature = e.features[0];
+        new mapboxgl.Popup()
+          .setLngLat(feature.geometry.coordinates)
+          .setHTML(`<strong>${feature.properties.name}</strong>`)
+          .addTo(map);
+      });
+
+      map.on("mouseenter", "warehouses-layer", () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      map.on("mouseleave", "warehouses-layer", () => {
+        map.getCanvas().style.cursor = "";
+      });
+
+      // Add custom city labels for Lviv region ONLY
+      map.addSource("lviv-cities", {
+        type: "geojson",
+        data: lvivCities
+      });
+
+      map.addLayer({
+        id: "lviv-cities-layer",
+        type: "symbol",
+        source: "lviv-cities",
+        layout: {
+          "text-field": ["get", "name"],
+          "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+          "text-size": [
+            "match",
+            ["get", "size"],
+            "large",
+            18,
+            "medium",
+            13,
+            12
+          ],
+          "text-offset": [0, 0.8],
+          "text-anchor": "top"
+        },
+        paint: {
+          "text-color": "#111111"
+        }
+      });
+
+      // Disable ALL map navigation interactions (view-only)
+      map.scrollZoom.disable();
+      map.boxZoom.disable();
+      map.dragPan.disable();
+      map.dragRotate.disable();
+      map.keyboard.disable();
+      map.doubleClickZoom.disable();
+      map.touchZoomRotate.disable();
+
+      // Scroll-driven animation
+      const hero = document.getElementById("hero");
+      const heroTop = hero.offsetTop;
+      const heroHeight = hero.offsetHeight;
+
+      function updateCamera() {
+        const scrollY = window.scrollY || window.pageYOffset;
+        const start = heroTop;
+        const end = heroTop + heroHeight - window.innerHeight;
+
+        let t = (scrollY - start) / (end - start);
+        t = clamp01(t);
+
+        if (!animationLocked) {
+          const centerLng = lerp(cameraStart.center[0], cameraEnd.center[0], t);
+          const centerLat = lerp(cameraStart.center[1], cameraEnd.center[1], t);
+          const zoom = lerp(cameraStart.zoom, cameraEnd.zoom, t);
+          const pitch = lerp(cameraStart.pitch, cameraEnd.pitch, t);
+          const bearing = lerp(cameraStart.bearing, cameraEnd.bearing, t);
+
+          map.jumpTo({
+            center: [centerLng, centerLat],
+            zoom,
+            pitch,
+            bearing,
+            animate: false
+          });
+
+          if (t >= 0.98) {
+            animationLocked = true;
+
+            // Lock view to Lviv region extents
+            map.setMaxBounds(lvivBounds);
+            map.setMinZoom(cameraEnd.zoom);
+            map.setMaxZoom(cameraEnd.zoom);
+
+            // Optional: if you want to “snap” exactly to final cameraEnd:
+            map.jumpTo({
+              center: cameraEnd.center,
+              zoom: cameraEnd.zoom,
+              pitch: cameraEnd.pitch,
+              bearing: cameraEnd.bearing,
+              animate: false
+            });
+          }
+
+        }
+
+        requestAnimationFrame(updateCamera);
+      }
+
+      requestAnimationFrame(updateCamera);
+    });
+  </script>
+</body>
+</html>
