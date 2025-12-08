@@ -15,7 +15,7 @@
 
   const map = new mapboxgl.Map({
     container: "map",
-    style: "mapbox://styles/mapbox/light-v11",
+    style: "mapbox://styles/mapbox/satellite-streets-v12", // Satellite view for natural look
     projection: "globe",
     center: [0, 20],
     zoom: 1.4,
@@ -137,34 +137,19 @@
   let animationLocked = false;
 
   map.on("load", () => {
-    // Minimal style: white background, only borders
+    // Add atmospheric fog for space-like appearance with satellite style
     if (map.setFog) {
-      map.setFog(null);
+      map.setFog({
+        color: 'rgb(10, 20, 40)', // Deep blue space color
+        'high-color': 'rgb(36, 92, 223)', // Brighter blue at horizon
+        'horizon-blend': 0.1,
+        'space-color': 'rgb(5, 5, 15)', // Very dark space background
+        'star-intensity': 0.6
+      });
     }
 
-    const style = map.getStyle();
-    const layers = style.layers || [];
-
-    const backgroundLayer = layers.find(l => l.type === "background");
-    if (backgroundLayer) {
-      map.setPaintProperty(backgroundLayer.id, "background-color", "#ffffff");
-    }
-
-    // Keep only border layers
-    const keepLayers = [
-      "admin-0-boundary",
-      "admin-0-boundary-disputed",
-      "admin-1-boundary"
-    ];
-
-    layers.forEach(layer => {
-      if (layer.type === "background") return;
-      if (!keepLayers.includes(layer.id)) {
-        try {
-          map.setLayoutProperty(layer.id, "visibility", "none");
-        } catch (e) {}
-      }
-    });
+    // Don't filter layers for satellite view - we want to see the Earth imagery
+    // Layer filtering will happen when we switch to light style for Lviv
 
     // Add warehouses
     map.addSource("warehouses", {
@@ -264,12 +249,95 @@
     const hero = document.getElementById("hero");
     let scrollLocked = true;
     let canScrollDown = false;
+    let hasTransitionedStyle = false; // Track if we've switched to light style
     
     // Lock body scroll initially
     document.body.style.overflow = 'hidden';
 
     function updateCamera() {
       const t = clamp01(progress);
+      
+      // Switch to light style when transitioning to Lviv region (at 60% progress)
+      if (t >= 0.6 && !hasTransitionedStyle) {
+        map.setStyle("mapbox://styles/mapbox/light-v11");
+        hasTransitionedStyle = true;
+        
+        // Re-add warehouse markers after style change
+        map.once('styledata', () => {
+          // Remove fog for cleaner Lviv view
+          if (map.setFog) {
+            map.setFog(null);
+          }
+          
+          if (!map.getSource('warehouses')) {
+            map.addSource("warehouses", {
+              type: "geojson",
+              data: warehouses
+            });
+          }
+          
+          if (!map.getLayer('warehouse-circles')) {
+            map.addLayer({
+              id: "warehouse-circles",
+              type: "circle",
+              source: "warehouses",
+              paint: {
+                "circle-radius": 6,
+                "circle-color": "#FF0000",
+                "circle-stroke-width": 2,
+                "circle-stroke-color": "#FFFFFF"
+              }
+            });
+          }
+          
+          if (!map.getLayer('warehouse-labels')) {
+            map.addLayer({
+              id: "warehouse-labels",
+              type: "symbol",
+              source: "warehouses",
+              layout: {
+                "text-field": ["get", "name"],
+                "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+                "text-size": [
+                  "interpolate",
+                  ["linear"],
+                  ["zoom"],
+                  6,
+                  10,
+                  8,
+                  12,
+                  13,
+                  12
+                ],
+                "text-offset": [0, 0.8],
+                "text-anchor": "top"
+              },
+              paint: {
+                "text-color": "#111111",
+                "text-halo-color": "#FFFFFF",
+                "text-halo-width": 2
+              }
+            });
+          }
+        });
+      } else if (t < 0.6 && hasTransitionedStyle) {
+        // Switch back to satellite when scrolling back up
+        map.setStyle("mapbox://styles/mapbox/satellite-streets-v12");
+        hasTransitionedStyle = false;
+        
+        // Restore space-like fog
+        map.once('styledata', () => {
+          if (map.setFog) {
+            map.setFog({
+              color: 'rgb(10, 20, 40)',
+              'high-color': 'rgb(36, 92, 223)',
+              'horizon-blend': 0.1,
+              'space-color': 'rgb(5, 5, 15)',
+              'star-intensity': 0.6
+            });
+          }
+        });
+      }
       
       const centerLng = lerp(cameraStart.center[0], cameraEnd.center[0], t);
       const centerLat = lerp(cameraStart.center[1], cameraEnd.center[1], t);
