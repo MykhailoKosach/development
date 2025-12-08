@@ -5,6 +5,7 @@
   <title>ProTec Development</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="css/style.css" />
+  <!-- <link rel="stylesheet" href="css/cloud-transition.css" /> -->
   <!-- Mapbox GL JS CSS -->
   <link
     href="https://api.mapbox.com/mapbox-gl-js/v3.16.0/mapbox-gl.css"
@@ -76,9 +77,33 @@
  <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
 
   <main>
-    <!-- HERO: INTERACTIVE MAP -->
-    <section class="hero" id="hero">
-      <div id="map"></div>
+    <!-- HERO: SPLIT LAYOUT -->
+    <section class="hero hero-split" id="hero">
+      <div class="hero-split-container">
+        <!-- LEFT SIDE: Text Content -->
+        <div class="hero-content">
+          <h1 class="hero-title">Промислові рішення для вашого бізнесу</h1>
+          <p class="hero-description">
+            Складські та логістичні комплекси у Львівському регіоні. 
+            Від концепції до реалізації — створюємо простори під ваші бізнес-процеси.
+          </p>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="hero-stat-number">4</span>
+              <span class="hero-stat-label">Локації</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-number">15,000+</span>
+              <span class="hero-stat-label">м² площі</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- RIGHT SIDE: Map -->
+        <div class="hero-map-wrapper">
+          <div id="map" class="hero-map-canvas"></div>
+        </div>
+      </div>
     </section>
 
 <section class="section section-dark" id="why">
@@ -378,6 +403,7 @@
 
   <!-- Mapbox GL JS -->
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.16.0/mapbox-gl.js"></script>
+  <!-- <script src="js/cloud-transition.js"></script> -->
   <script src="js/hero-map.js"></script>
 </body>
 </html>

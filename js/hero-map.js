@@ -9,6 +9,27 @@
     return; // Exit early on mobile
   }
 
+  // Initialize cloud transition overlay
+  // const cloudOverlay = window.CloudTransition ? 
+  //   window.CloudTransition.initCloudOverlay('hero') : 
+  //   null;
+  
+  // // Debug: Log overlay status
+  // if (cloudOverlay) {
+  //   console.log('Cloud overlay initialized:', cloudOverlay);
+  //   // Temporary test: Show clouds for 3 seconds on load
+  //   setTimeout(() => {
+  //     cloudOverlay.classList.add('active');
+  //     console.log('Cloud test: showing clouds');
+  //     setTimeout(() => {
+  //       cloudOverlay.classList.remove('active');
+  //       console.log('Cloud test: hiding clouds');
+  //     }, 3000);
+  //   }, 1000);
+  // } else {
+  //   console.warn('Cloud overlay not initialized - CloudTransition not available');
+  // }
+
   // TODO: Replace with your properly configured Mapbox token
   // Token must have your GitHub Pages URL in its allowlist
   mapboxgl.accessToken = "pk.eyJ1IjoibXlraGFpbG9rb3NhY2giLCJhIjoiY21pcTB3NHN6MDh4MTNlczh2bm9pdG1jdyJ9.JR_xYNvPBF70Gg5JF9ASTw";
@@ -18,7 +39,7 @@
     style: "mapbox://styles/mapbox/satellite-streets-v12", // Satellite view for natural look
     projection: "globe",
     center: [0, 20],
-    zoom: 1.4,
+    zoom: 1.2,
     pitch: 0,
     bearing: 0,
     antialias: true
@@ -27,14 +48,14 @@
   // Camera states
   const cameraStart = {
     center: [0, 20],
-    zoom: 1.4,
+    zoom: 1.2,
     pitch: 0,
     bearing: 0
   };
 
   const cameraEnd = {
     center: [24.25, 49.75],
-    zoom: 7.2,
+    zoom: 6.8,
     pitch: 0,
     bearing: 0,
   };
@@ -54,7 +75,7 @@
         properties: { name: "Рясне", link: "riasne.html" },
         geometry: {
           type: "Point",
-          coordinates: [23.9123375, 49.877912] // Moved slightly east and north
+          coordinates: [23.95, 49.89] // Further north-east
         }
       },
       {
@@ -62,7 +83,7 @@
         properties: { name: "Підрясне", link: "riasne.html" },
         geometry: {
           type: "Point",
-          coordinates: [23.874802, 49.8538035] // Moved west and south
+          coordinates: [23.84, 49.84] // Further south-west
         }
       },
       {
@@ -70,7 +91,7 @@
         properties: { name: "Зимна Вода", link: "zymna-voda.html" },
         geometry: {
           type: "Point",
-          coordinates: [23.8756375, 49.816705] // Moved slightly south
+          coordinates: [23.8756375, 49.79] // Further south
         }
       },
       {
@@ -137,14 +158,22 @@
   let animationLocked = false;
 
   map.on("load", () => {
-    // Add atmospheric fog for space-like appearance with satellite style
+    // Remove fog/atmosphere effects
     if (map.setFog) {
-      map.setFog({
-        color: 'rgb(10, 20, 40)', // Deep blue space color
-        'high-color': 'rgb(36, 92, 223)', // Brighter blue at horizon
-        'horizon-blend': 0.1,
-        'space-color': 'rgb(5, 5, 15)', // Very dark space background
-        'star-intensity': 0.6
+      map.setFog(null);
+    }
+
+    // Hide all built-in labels from the map
+    const style = map.getStyle();
+    if (style && style.layers) {
+      style.layers.forEach(layer => {
+        if (layer.type === 'symbol' && layer.layout && layer.layout['text-field']) {
+          map.setLayoutProperty(layer.id, 'visibility', 'none');
+        }
+        // Hide atmosphere/sky layers
+        if (layer.type === 'sky' || layer.id === 'sky') {
+          map.setLayoutProperty(layer.id, 'visibility', 'none');
+        }
       });
     }
 
@@ -162,29 +191,10 @@
       type: "circle",
       source: "warehouses",
       paint: {
-        "circle-radius": 6,
+        "circle-radius": 4,
         "circle-color": "#ff6b6b",
         "circle-stroke-width": 2,
         "circle-stroke-color": "#ffffff"
-      }
-    });
-
-    // Add warehouse labels directly next to markers
-    map.addLayer({
-      id: "warehouses-labels",
-      type: "symbol",
-      source: "warehouses",
-      layout: {
-        "text-field": ["get", "name"],
-        "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
-        "text-size": 14,
-        "text-offset": [0, -1.5],
-        "text-anchor": "bottom"
-      },
-      paint: {
-        "text-color": "#111111",
-        "text-halo-color": "#ffffff",
-        "text-halo-width": 2
       }
     });
 
@@ -204,35 +214,53 @@
       map.getCanvas().style.cursor = "";
     });
 
-    // Add city labels
-    map.addSource("lviv-cities", {
-      type: "geojson",
-      data: lvivCities
+    // Add custom HTML labels for warehouses
+    const warehouseLabels = [];
+    const mapContainer = document.querySelector('.hero-map-wrapper') || document.getElementById('hero');
+    
+    warehouses.features.forEach((feature) => {
+      const coords = feature.geometry.coordinates;
+      const name = feature.properties.name;
+      
+      // Determine label position based on warehouse name
+      const isLeftSide = name === "Підрясне" || name === "Дрогобич";
+      
+      // Create label element
+      const label = document.createElement('div');
+      label.className = 'warehouse-label' + (isLeftSide ? ' warehouse-label-left' : ' warehouse-label-right');
+      label.textContent = name;
+      label.dataset.lng = coords[0];
+      label.dataset.lat = coords[1];
+      
+      // Add click handler
+      label.addEventListener('click', () => {
+        if (feature.properties.link) {
+          window.location.href = feature.properties.link;
+        }
+      });
+      
+      mapContainer.appendChild(label);
+      warehouseLabels.push(label);
     });
-
-    map.addLayer({
-      id: "lviv-cities-layer",
-      type: "symbol",
-      source: "lviv-cities",
-      layout: {
-        "text-field": ["get", "name"],
-        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-        "text-size": [
-          "match",
-          ["get", "size"],
-          "large",
-          18,
-          "medium",
-          13,
-          12
-        ],
-        "text-offset": [0, 0.8],
-        "text-anchor": "top"
-      },
-      paint: {
-        "text-color": "#111111"
-      }
-    });
+    
+    // Function to update label positions
+    function updateLabelPositions() {
+      warehouseLabels.forEach((label) => {
+        const lng = parseFloat(label.dataset.lng);
+        const lat = parseFloat(label.dataset.lat);
+        const point = map.project([lng, lat]);
+        
+        label.style.left = point.x + 'px';
+        label.style.top = point.y + 'px';
+      });
+    }
+    
+    // Update positions on map move
+    map.on('move', updateLabelPositions);
+    map.on('zoom', updateLabelPositions);
+    
+    // Initial position update
+    updateLabelPositions();
 
     // Disable all navigation
     map.scrollZoom.disable();
@@ -269,6 +297,16 @@
             map.setFog(null);
           }
           
+          // Hide all built-in labels from the light style
+          const style = map.getStyle();
+          if (style && style.layers) {
+            style.layers.forEach(layer => {
+              if (layer.type === 'symbol' && layer.layout && layer.layout['text-field']) {
+                map.setLayoutProperty(layer.id, 'visibility', 'none');
+              }
+            });
+          }
+          
           if (!map.getSource('warehouses')) {
             map.addSource("warehouses", {
               type: "geojson",
@@ -282,58 +320,37 @@
               type: "circle",
               source: "warehouses",
               paint: {
-                "circle-radius": 6,
+                "circle-radius": 4,
                 "circle-color": "#FF0000",
                 "circle-stroke-width": 2,
                 "circle-stroke-color": "#FFFFFF"
               }
             });
           }
-          
-          if (!map.getLayer('warehouse-labels')) {
-            map.addLayer({
-              id: "warehouse-labels",
-              type: "symbol",
-              source: "warehouses",
-              layout: {
-                "text-field": ["get", "name"],
-                "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
-                "text-size": [
-                  "interpolate",
-                  ["linear"],
-                  ["zoom"],
-                  6,
-                  10,
-                  8,
-                  12,
-                  13,
-                  12
-                ],
-                "text-offset": [0, 0.8],
-                "text-anchor": "top"
-              },
-              paint: {
-                "text-color": "#111111",
-                "text-halo-color": "#FFFFFF",
-                "text-halo-width": 2
-              }
-            });
-          }
         });
+        
       } else if (t < 0.6 && hasTransitionedStyle) {
         // Switch back to satellite when scrolling back up
         map.setStyle("mapbox://styles/mapbox/satellite-streets-v12");
         hasTransitionedStyle = false;
         
-        // Restore space-like fog
+        // Remove fog when switching back to satellite
         map.once('styledata', () => {
           if (map.setFog) {
-            map.setFog({
-              color: 'rgb(10, 20, 40)',
-              'high-color': 'rgb(36, 92, 223)',
-              'horizon-blend': 0.1,
-              'space-color': 'rgb(5, 5, 15)',
-              'star-intensity': 0.6
+            map.setFog(null);
+          }
+          
+          // Hide all built-in labels when returning to satellite style
+          const style = map.getStyle();
+          if (style && style.layers) {
+            style.layers.forEach(layer => {
+              if (layer.type === 'symbol' && layer.layout && layer.layout['text-field']) {
+                map.setLayoutProperty(layer.id, 'visibility', 'none');
+              }
+              // Hide atmosphere/sky layers
+              if (layer.type === 'sky' || layer.id === 'sky') {
+                map.setLayoutProperty(layer.id, 'visibility', 'none');
+              }
             });
           }
         });
