@@ -9,7 +9,9 @@
     return; // Exit early on mobile
   }
 
-  mapboxgl.accessToken = "pk.eyJ1IjoibXlraGFpbG9rb3NhY2giLCJhIjoiY21pdWQ0NXhhMGh5MjNlcjR1dHAxdW9sbCJ9.6bpb1fGFi-m5SR7oDuMFtQ";
+  // TODO: Replace with your properly configured Mapbox token
+  // Token must have your GitHub Pages URL in its allowlist
+  mapboxgl.accessToken = "pk.eyJ1IjoibXlraGFpbG9rb3NhY2giLCJhIjoiY21pcTB3NHN6MDh4MTNlczh2bm9pdG1jdyJ9.JR_xYNvPBF70Gg5JF9ASTw";
 
   const map = new mapboxgl.Map({
     container: "map",
@@ -256,95 +258,110 @@
     map.doubleClickZoom.disable();
     map.touchZoomRotate.disable();
 
-    // Wheel-driven animation on hero section only
+    // Scroll-based animation with locking
     let progress = 0;
-    const animationSpeed = 0.0008; // Slower animation
+    const animationSpeed = 0.0008;
     const hero = document.getElementById("hero");
-    let canScroll = false;
+    let scrollLocked = true;
+    let canScrollDown = false;
+    
+    // Lock body scroll initially
+    document.body.style.overflow = 'hidden';
 
     function updateCamera() {
-      if (!animationLocked && progress < 1) {
-        const t = clamp01(progress);
-        
-        const centerLng = lerp(cameraStart.center[0], cameraEnd.center[0], t);
-        const centerLat = lerp(cameraStart.center[1], cameraEnd.center[1], t);
-        const zoom = lerp(cameraStart.zoom, cameraEnd.zoom, t);
-        const pitch = lerp(cameraStart.pitch, cameraEnd.pitch, t);
-        const bearing = lerp(cameraStart.bearing, cameraEnd.bearing, t);
+      const t = clamp01(progress);
+      
+      const centerLng = lerp(cameraStart.center[0], cameraEnd.center[0], t);
+      const centerLat = lerp(cameraStart.center[1], cameraEnd.center[1], t);
+      const zoom = lerp(cameraStart.zoom, cameraEnd.zoom, t);
+      const pitch = lerp(cameraStart.pitch, cameraEnd.pitch, t);
+      const bearing = lerp(cameraStart.bearing, cameraEnd.bearing, t);
 
+      map.jumpTo({
+        center: [centerLng, centerLat],
+        zoom,
+        pitch,
+        bearing,
+        animate: false
+      });
+
+      if (progress >= 0.98 && scrollLocked) {
+        animationLocked = true;
+        scrollLocked = false;
+        
+        map.setMaxBounds(lvivBounds);
+        map.setMinZoom(cameraEnd.zoom);
+        map.setMaxZoom(cameraEnd.zoom);
         map.jumpTo({
-          center: [centerLng, centerLat],
-          zoom,
-          pitch,
-          bearing,
+          center: cameraEnd.center,
+          zoom: cameraEnd.zoom,
+          pitch: cameraEnd.pitch,
+          bearing: cameraEnd.bearing,
           animate: false
         });
-
-        if (progress >= 0.98) {
-          animationLocked = true;
-          
-          map.setMaxBounds(lvivBounds);
-          map.setMinZoom(cameraEnd.zoom);
-          map.setMaxZoom(cameraEnd.zoom);
-          map.jumpTo({
-            center: cameraEnd.center,
-            zoom: cameraEnd.zoom,
-            pitch: cameraEnd.pitch,
-            bearing: cameraEnd.bearing,
-            animate: false
-          });
-          
-          // Enable scrolling after 1.5 second delay
-          setTimeout(() => {
-            canScroll = true;
-          }, 1500);
-        }
+        
+        // Unlock scroll after 1.5 second delay
+        setTimeout(() => {
+          canScrollDown = true;
+          document.body.style.overflow = '';
+        }, 1500);
+      } else if (progress < 0.98 && animationLocked) {
+        // Reset if scrolling back
+        animationLocked = false;
+        scrollLocked = true;
+        canScrollDown = false;
+        document.body.style.overflow = 'hidden';
+        map.setMaxBounds(null);
+        map.setMinZoom(0);
+        map.setMaxZoom(22);
       }
     }
 
-    // Handle wheel events only when hero is in view
+    // Handle wheel events
     window.addEventListener('wheel', (e) => {
-      const heroRect = hero.getBoundingClientRect();
-      const isHeroVisible = heroRect.top <= 0 && heroRect.bottom > 0;
-      
-      if (isHeroVisible && !animationLocked && window.scrollY === 0) {
+      if (scrollLocked || !canScrollDown) {
         e.preventDefault();
-        progress += Math.abs(e.deltaY) * animationSpeed;
-        progress = Math.min(progress, 1);
+        
+        // Update progress based on scroll direction
+        if (e.deltaY > 0) {
+          // Scrolling down - zoom in
+          progress += Math.abs(e.deltaY) * animationSpeed;
+        } else {
+          // Scrolling up - zoom out
+          progress -= Math.abs(e.deltaY) * animationSpeed;
+        }
+        
+        progress = Math.max(0, Math.min(1, progress));
         updateCamera();
-      } else if (isHeroVisible && animationLocked && !canScroll) {
-        // Prevent scroll until delay passes
-        e.preventDefault();
       }
     }, { passive: false });
 
     // Handle touch events for mobile
     let touchStartY = 0;
     window.addEventListener('touchstart', (e) => {
-      const heroRect = hero.getBoundingClientRect();
-      const isHeroVisible = heroRect.top <= 0 && heroRect.bottom > 0;
-      if (isHeroVisible && window.scrollY === 0) {
-        touchStartY = e.touches[0].clientY;
-      }
+      touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
     window.addEventListener('touchmove', (e) => {
-      const heroRect = hero.getBoundingClientRect();
-      const isHeroVisible = heroRect.top <= 0 && heroRect.bottom > 0;
-      
-      if (isHeroVisible && !animationLocked && window.scrollY === 0) {
+      if (scrollLocked || !canScrollDown) {
         e.preventDefault();
         const touchY = e.touches[0].clientY;
         const delta = touchStartY - touchY;
-        progress += Math.abs(delta) * animationSpeed * 0.5;
-        progress = Math.min(progress, 1);
+        
+        if (delta > 0) {
+          // Scrolling down
+          progress += Math.abs(delta) * animationSpeed * 0.5;
+        } else {
+          // Scrolling up
+          progress -= Math.abs(delta) * animationSpeed * 0.5;
+        }
+        
+        progress = Math.max(0, Math.min(1, progress));
         touchStartY = touchY;
         updateCamera();
-      } else if (isHeroVisible && animationLocked && !canScroll) {
-        e.preventDefault();
       }
     }, { passive: false });
 
-    requestAnimationFrame(updateCamera);
+    updateCamera();
   });
 })();
