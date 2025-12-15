@@ -35,17 +35,21 @@
   }
 })();
 
-// Language toggle
+// Language toggle - acts as a switch
 (function() {
-  const langButtons = document.querySelectorAll(".lang-btn");
-
-  if (langButtons.length) {
-    langButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        langButtons.forEach((b) => b.classList.remove("active"));
-        btn.classList.add("active");
-        // TODO: hook real language switch here later
-      });
+  const langToggles = document.querySelectorAll(".lang-toggle");
+  
+  langToggles.forEach((toggle) => {
+    toggle.addEventListener("click", (e) => {
+      // Check if we're on the English page
+      const isEnglish = window.location.pathname.includes('index-en.html');
+      
+      // Toggle to the other language
+      if (isEnglish) {
+        window.location.href = 'index.html';
+      } else {
+        window.location.href = 'index-en.html';
+      }
     });
-  }
+  });
 })();
