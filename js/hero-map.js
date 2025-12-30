@@ -37,7 +37,8 @@
           geometry: { type: "Point", coordinates: [23.95, 49.89] },
           properties: { 
             name: "Рясне",
-            position: "right"
+            position: "right",
+            link: "riasne.html"
           }
         },
         {
@@ -45,7 +46,8 @@
           geometry: { type: "Point", coordinates: [23.84, 49.84] },
           properties: { 
             name: "Підрясне",
-            position: "left"
+            position: "left",
+            link: "riasne.html"
           }
         },
         {
@@ -53,7 +55,8 @@
           geometry: { type: "Point", coordinates: [23.8756375, 49.79] },
           properties: { 
             name: "Зимна Вода",
-            position: "right"
+            position: "right",
+            link: "zymna-voda.html"
           }
         },
         {
@@ -61,7 +64,8 @@
           geometry: { type: "Point", coordinates: [23.51006, 49.35316] },
           properties: { 
             name: "Дрогобич",
-            position: "left"
+            position: "left",
+            link: "zymna-voda.html"
           }
         }
       ]
@@ -112,6 +116,15 @@
         label.className = `warehouse-label warehouse-label-${feature.properties.position}`;
         label.textContent = feature.properties.name;
         label.style.display = 'none';
+        
+        // Add click handler for navigation
+        label.addEventListener('click', () => {
+          const link = feature.properties.link;
+          if (link) {
+            window.location.href = link;
+          }
+        });
+        
         container.appendChild(label);
         
         const updateLabelPosition = () => {
@@ -301,7 +314,7 @@
     // Don't filter layers for satellite view - we want to see the Earth imagery
     // Layer filtering will happen when we switch to light style for Lviv
 
-    // Add warehouses
+    // Add warehouses (initially hidden during globe view)
     map.addSource("warehouses", {
       type: "geojson",
       data: warehouses
@@ -315,7 +328,9 @@
         "circle-radius": 4,
         "circle-color": "#ff6b6b",
         "circle-stroke-width": 2,
-        "circle-stroke-color": "#ffffff"
+        "circle-stroke-color": "#ffffff",
+        "circle-opacity": 0, // Hidden during globe view
+        "circle-stroke-opacity": 0 // Hidden during globe view
       }
     });
 
@@ -352,6 +367,8 @@
       label.textContent = name;
       label.dataset.lng = coords[0];
       label.dataset.lat = coords[1];
+      label.style.opacity = '0'; // Hidden during globe view
+      label.style.pointerEvents = 'none'; // Disable clicks during globe view
       
       // Add click handler
       label.addEventListener('click', () => {
@@ -447,7 +464,9 @@
                 "circle-radius": 4,
                 "circle-color": "#FF0000",
                 "circle-stroke-width": 2,
-                "circle-stroke-color": "#FFFFFF"
+                "circle-stroke-color": "#FFFFFF",
+                "circle-opacity": 1, // Show immediately when style loads
+                "circle-stroke-opacity": 1 // Show immediately when style loads
               }
             });
             
@@ -467,6 +486,12 @@
               map.getCanvas().style.cursor = "";
             });
           }
+          
+          // Show labels immediately when style loads
+          warehouseLabels.forEach(label => {
+            label.style.opacity = '1';
+            label.style.pointerEvents = 'auto';
+          });
         });
       }
       
