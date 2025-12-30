@@ -1805,14 +1805,13 @@ body {
 
 #about {
   position: relative;
-  min-height: 600vh;
+  min-height: 100vh;
   background: #ffffff;
   padding: 100px 0;
 }
 
 .about-scroller-container {
-  position: sticky;
-  top: 0;
+  position: relative;
   height: 100vh;
   display: flex;
   align-items: center;

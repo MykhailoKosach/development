@@ -157,86 +157,133 @@
   }
 
   // ==================== DESKTOP VERSION ====================
-  let currentIndex = -1;
-  let hasInitialized = false;
-  let isAnimating = false;
-  let animationTimeout = null;
-  let scrollListenerActive = true;
-  let lastActivatedIndex = -1;
+  let hasAnimated = false;
+  let animationInProgress = false;
+  let scrollLocked = false;
+  let sectionCentered = false;
 
-  function initializePhrases() {
-    if (hasInitialized) return;
-    hasInitialized = true;
-    
-    phrases.forEach((phrase, index) => {
-      setTimeout(() => {
-        phrase.classList.add('loaded');
-      }, index * 200);
-    });
+  function lockScroll() {
+    if (!scrollLocked) {
+      scrollLocked = true;
+      document.body.style.overflow = 'hidden';
+    }
   }
 
-  function getScrollProgress() {
+  function unlockScroll() {
+    if (scrollLocked) {
+      scrollLocked = false;
+      document.body.style.overflow = '';
+    }
+  }
+
+  function isSectionCentered() {
     const rect = aboutSection.getBoundingClientRect();
-    const sectionHeight = aboutSection.offsetHeight;
     const viewportHeight = window.innerHeight;
+    const sectionCenter = rect.top + (rect.height / 2);
+    const viewportCenter = viewportHeight / 2;
     
-    const scrollStart = -rect.top;
-    const scrollRange = sectionHeight - viewportHeight;
-    const progress = Math.max(0, Math.min(1, scrollStart / scrollRange));
-    
-    return progress;
+    // Check if section center is within 100px of viewport center
+    return Math.abs(sectionCenter - viewportCenter) < 100;
   }
 
   function drawArrow(index) {
     const phrase = phrases[index];
     const description = document.getElementById(`aboutDesc${index + 1}`);
     const arrowPath = document.getElementById(`aboutArrowPath${index + 1}`);
+    const arrowSvg = document.getElementById('aboutArrowContainer');
     
-    if (!phrase || !description || !arrowPath) return;
+    if (!phrase || !description || !arrowPath || !arrowSvg) return;
 
-    const phraseRect = phrase.getBoundingClientRect();
-    const descRect = description.getBoundingClientRect();
+    // Get the red border SVG element inside the phrase
+    const borderSvg = phrase.querySelector('.about-border-svg');
+    if (!borderSvg) return;
     
+    const borderRect = borderSvg.getBoundingClientRect();
+    const descRect = description.getBoundingClientRect();
+    const svgRect = arrowSvg.getBoundingClientRect();
+    
+    // Calculate arrow position based on phrase index
     const arrowConfig = [
-      { offset: 0.25, pixelOffset: -130 },
-      { offset: 0.1, pixelOffset: -50 },
-      { offset: 0.5, pixelOffset: 0 },
-      { offset: 0.2, pixelOffset: 0 }
+      { offset: 0.5, pixelOffset: 0 },  // "Ми" - shifted right
+      { offset: 0.5, pixelOffset: -50 },   // "будуємо" - slightly left
+      { offset: 0.5, pixelOffset: 100 },     // "більше ніж склади" - shifted right
+      { offset: 0.5, pixelOffset: 0 }      // "ми будуємо можливості" - center
     ];
     
     const config = arrowConfig[index];
-    const arrowX = phraseRect.left + (phraseRect.width * config.offset) + config.pixelOffset;
-    const descIsBelow = descRect.top > phraseRect.bottom;
+    const arrowXAbs = borderRect.left + (borderRect.width * config.offset) + config.pixelOffset;
+    const descIsBelow = descRect.top > borderRect.bottom;
+
+    // Start from the red border edge
+    const gapFromBorder = 2;
+    const startX = arrowXAbs - svgRect.left;
+    const startY = (descIsBelow ? (borderRect.bottom - gapFromBorder) : (borderRect.top + gapFromBorder)) - svgRect.top;
     
-    const startX = arrowX;
-    const startY = descIsBelow ? phraseRect.bottom : phraseRect.top;
-    const endX = arrowX;
-    const endY = descIsBelow ? descRect.top : descRect.bottom;
+    // End 15px before the description card
+    const gapBeforeCard = 12;
+    // Keep arrows perfectly straight (no angles)
+    const endX = startX;
+    const endY = (descIsBelow ? (descRect.top - gapBeforeCard) : (descRect.bottom + gapBeforeCard)) - svgRect.top;
 
     const pathData = `M ${startX} ${startY} L ${endX} ${endY}`;
     arrowPath.setAttribute('d', pathData);
     arrowPath.classList.add('visible');
   }
 
-  function hideArrow(index) {
-    const arrowPath = document.getElementById(`aboutArrowPath${index + 1}`);
-    if (arrowPath) {
-      arrowPath.classList.remove('visible');
-    }
-  }
-
-  function activatePhrase(index) {
+  function deactivatePhrase(index) {
     if (index < 0 || index >= phrases.length) return;
-    if (phrases[index].classList.contains('active') || lastActivatedIndex === index) return;
     
-    lastActivatedIndex = index;
-    phrases[index].classList.add('active');
+    // Remove only the active class (red border)
+    phrases[index].classList.remove('active');
     
     const borderPath = phrases[index].querySelector('.about-border-path');
     if (borderPath) {
       const pathLength = borderPath.getTotalLength();
+      // Reset without animating (prevents "double"/"half" animations)
+      const prevTransition = borderPath.style.transition;
+      borderPath.style.transition = 'none';
       borderPath.style.strokeDasharray = pathLength;
-      borderPath.style.strokeDashoffset = '0';
+      borderPath.style.strokeDashoffset = pathLength;
+      borderPath.getBoundingClientRect();
+      borderPath.style.transition = prevTransition;
+    }
+    
+    // Keep arrows and descriptions visible
+  }
+
+  function activatePhrase(index, callback) {
+    if (index < 0 || index >= phrases.length) {
+      if (callback) callback();
+      return;
+    }
+    
+    // Deactivate previous phrase (remove red border)
+    if (index > 0) {
+      deactivatePhrase(index - 1);
+    }
+    
+    const borderPath = phrases[index].querySelector('.about-border-path');
+    if (borderPath) {
+      // Calculate and set the path length BEFORE adding active class
+      const pathLength = borderPath.getTotalLength();
+      // Set initial (hidden) state WITHOUT animating
+      const prevTransition = borderPath.style.transition;
+      borderPath.style.transition = 'none';
+      borderPath.style.strokeDasharray = pathLength;
+      borderPath.style.strokeDashoffset = pathLength;
+      borderPath.getBoundingClientRect();
+      borderPath.style.transition = prevTransition;
+    }
+    
+    // Now add the active class and loaded class
+    phrases[index].classList.add('active');
+    phrases[index].classList.add('loaded');
+    
+    // Trigger the animation by setting dashoffset to 0
+    if (borderPath) {
+      requestAnimationFrame(() => {
+        borderPath.style.strokeDashoffset = '0';
+      });
     }
 
     const description = document.getElementById(`aboutDesc${index + 1}`);
@@ -246,97 +293,69 @@
 
     setTimeout(() => {
       drawArrow(index);
+      if (callback) callback();
     }, 100);
   }
 
-  function deactivatePhrase(index) {
-    if (index < 0 || index >= phrases.length) return;
+  function runAutoAnimation() {
+    if (hasAnimated || animationInProgress) return;
     
-    phrases[index].classList.remove('active');
-    
-    const borderPath = phrases[index].querySelector('.about-border-path');
-    if (borderPath) {
-      const pathLength = borderPath.getTotalLength();
-      borderPath.style.strokeDasharray = pathLength;
-      borderPath.style.strokeDashoffset = pathLength;
-    }
+    animationInProgress = true;
+    hasAnimated = true;
+    lockScroll();
 
-    hideArrow(index);
+    // Initialize all phrases
+    phrases.forEach((phrase, index) => {
+      setTimeout(() => {
+        phrase.classList.add('loaded');
+      }, index * 200);
+    });
+
+    // Activate each phrase sequentially with 2-second intervals
+    const delays = [800, 2800, 4800, 6800]; // 2 seconds between each (800ms start + 2000ms intervals)
     
-    if (lastActivatedIndex === index) {
-      lastActivatedIndex = -1;
-    }
+    delays.forEach((delay, index) => {
+      setTimeout(() => {
+        activatePhrase(index, () => {
+          if (index === phrases.length - 1) {
+            // After last phrase, wait a bit then unlock scroll
+            setTimeout(() => {
+              animationInProgress = false;
+              unlockScroll();
+            }, 1000);
+          }
+        });
+      }, delay);
+    });
   }
 
-  function updateOnScroll() {
-    if (isAnimating) return;
+  function checkIfCentered() {
+    if (hasAnimated || animationInProgress) return;
     
     const rect = aboutSection.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
     
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      initializePhrases();
-    }
+    // Check if section is visible at all
+    if (rect.top > viewportHeight || rect.bottom < 0) return;
     
-    if (rect.top > window.innerHeight || rect.bottom < 0) {
-      return;
-    }
-    
-    const progress = getScrollProgress();
-    
-    const thresholds = [
-      { start: 0.1, end: 0.25 },
-      { start: 0.25, end: 0.5 },
-      { start: 0.5, end: 0.7 },
-      { start: 0.7, end: 0.95 }
-    ];
-    
-    let newIndex = -1;
-    
-    for (let i = 0; i < thresholds.length; i++) {
-      if (progress >= thresholds[i].start) {
-        newIndex = i;
-      }
-    }
-    
-    if (newIndex !== currentIndex) {
-      if (isAnimating && newIndex === lastActivatedIndex) {
-        return;
-      }
-      
-      scrollListenerActive = false;
-      isAnimating = true;
-      
-      if (animationTimeout) {
-        clearTimeout(animationTimeout);
-      }
-      
-      if (currentIndex >= 0 && currentIndex !== newIndex) {
-        deactivatePhrase(currentIndex);
-      }
-      
-      if (newIndex >= 0) {
-        activatePhrase(newIndex);
-      }
-      
-      currentIndex = newIndex;
-      
-      animationTimeout = setTimeout(() => {
-        isAnimating = false;
-        scrollListenerActive = true;
-      }, 1200);
+    // Check if section is centered
+    if (isSectionCentered() && !sectionCentered) {
+      sectionCentered = true;
+      runAutoAnimation();
     }
   }
 
-  function handleScroll() {
-    if (!scrollListenerActive) return;
-    updateOnScroll();
-  }
-
-  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('scroll', checkIfCentered, { passive: true });
+  
+  // Check on load in case section is already centered
+  checkIfCentered();
   
   window.addEventListener('resize', () => {
-    if (currentIndex >= 0) {
-      drawArrow(currentIndex);
-    }
+    // Redraw all visible arrows on resize
+    phrases.forEach((phrase, index) => {
+      if (phrase.classList.contains('active') || descriptions[index]?.classList.contains('visible')) {
+        drawArrow(index);
+      }
+    });
   });
 })();
