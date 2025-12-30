@@ -74,15 +74,15 @@ a {
 }
 
 .logo {
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: #111827;
+  display: flex;
+  align-items: center;
+  height: 40px;
 }
 
-.logo span {
-  color: var(--accent);
+.logo img {
+  height: 100%;
+  width: auto;
+  display: block;
 }
 
 /* MAIN NAV (desktop) */
