@@ -6,7 +6,7 @@
 (function () {
   const data = [
     {
-      img: "https://picsum.photos/id/1011/1600/1000",
+      img: "assets/zymna-main.jpg",
       name: "Зимна Вода",
       short: "Складський комплекс класу А+ площею 116 000 м² на Кільцевій дорозі Львова.",
       area: "116 000 м²",
@@ -16,7 +16,7 @@
       link: "zymna-voda.html"
     },
     {
-      img: "https://picsum.photos/id/1003/1600/1000",
+      img: "assets/pidryasne-main.jpg",
       name: "Підрясне",
       short: "Сучасний комплекс класу A, переобладнаний під виробничі потреби, 41 000 м².",
       area: "41 000 м²",
@@ -26,17 +26,17 @@
       link: "pidriasne.html"
     },
     {
-      img: "https://picsum.photos/id/1005/1600/1000",
+      img: "assets/ryasne-main.jpg",
       name: "Рясне",
       short: "Складський комплекс класу B+ площею 7 235,6 м² із сучасною інженерією.",
       area: "7 235,6 м²",
-      type: "Сухий, холодильний",
+      type: "Сухий, холодільний",
       cls: "B+",
       location: "Рясне, Львів",
       link: "riasne.html"
     },
     {
-      img: "https://picsum.photos/id/1016/1600/1000",
+      img: "assets/drohobych-main.png",
       name: "Дрогобич",
       short: "Промисловий об'єкт у стратегічній локації з потенціалом розвитку логістики.",
       area: "—",
