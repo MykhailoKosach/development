@@ -1839,6 +1839,11 @@ body {
   transition: opacity 0.5s ease;
 }
 
+/* Active phrase highlight (desktop) */
+.about-phrase.active {
+  color: var(--accent);
+}
+
 .about-phrase.loaded {
   opacity: 1;
 }
@@ -1854,8 +1859,9 @@ body {
   transition: opacity 0.3s ease;
 }
 
+/* Border is no longer used as the active indicator */
 .about-phrase.active .about-border-svg {
-  opacity: 1;
+  opacity: 0;
 }
 
 .about-border-path {
@@ -1871,7 +1877,7 @@ body {
 }
 
 .about-phrase.active .about-border-path {
-  stroke-dashoffset: 0;
+  stroke-dashoffset: 1000;
 }
 
 /* Arrow paths */
@@ -1944,7 +1950,7 @@ body {
   .about-scroller-container {
     position: relative;
     height: 100vh;
-    padding: 80px 20px 120px;
+    padding: 100px 20px 120px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -1967,21 +1973,10 @@ body {
     padding: 0;
     margin: 0 4px;
     display: inline-block;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(30px) scale(0.9);
-    transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-                transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-                visibility 0s 0.6s;
-  }
-
-  .about-phrase.mobile-visible {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0) scale(1);
-    transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-                transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-                visibility 0s;
+    transform: none;
+    transition: none;
   }
 
   .about-phrase.mobile-active {

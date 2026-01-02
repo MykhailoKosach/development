@@ -20,34 +20,49 @@
     let touchStartY = 0;
     let touchStartX = 0;
     let isAnimating = false;
-    let isSectionFixed = false;
-    let scrollLocked = false;
+    let isLocked = false;
 
-    function lockScroll() {
-      if (!scrollLocked) {
-        scrollLocked = true;
-        document.body.style.overflow = 'hidden';
-      }
+    function lockPageScroll() {
+      if (isLocked) return;
+      isLocked = true;
+
+      // Lock scrolling without changing scroll position (prevents jump-to-top flash)
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      document.body.style.overscrollBehavior = 'none';
     }
 
-    function unlockScroll() {
-      if (scrollLocked) {
-        scrollLocked = false;
-        document.body.style.overflow = '';
-      }
+    function unlockPageScroll() {
+      if (!isLocked) return;
+      isLocked = false;
+
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      document.body.style.overscrollBehavior = '';
     }
 
     function checkSectionPosition() {
-      const rect = aboutSection.getBoundingClientRect();
-      
-      if (rect.top <= 100 && !isSectionFixed && mobileCurrentStep < phrases.length - 1) {
-        isSectionFixed = true;
-        lockScroll();
-        aboutSection.style.position = 'fixed';
-        aboutSection.style.top = '0';
-        aboutSection.style.left = '0';
-        aboutSection.style.right = '0';
-        aboutSection.style.zIndex = '100';
+      if (isLocked) return;
+      const headerEl = document.querySelector('.site-header');
+      const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 0;
+
+      // Lock when the mission text (phrases) hits the very top under the header
+      const anchorEl = aboutSection.querySelector('.about-mission-text') || phrases[0] || aboutSection;
+      const anchorRect = anchorEl.getBoundingClientRect();
+      const lockY = headerHeight;
+
+      if (mobileCurrentStep >= phrases.length - 1) return;
+
+      // Only lock when the anchor crosses the header line
+      if (anchorRect.top <= lockY && anchorRect.bottom >= lockY) {
+        const delta = anchorRect.top - lockY;
+
+        // Snap-align to remove the white gap (section padding) before locking
+        if (Math.abs(delta) <= 120) {
+          window.scrollBy(0, delta);
+        }
+
+        lockPageScroll();
       }
     }
 
@@ -57,45 +72,31 @@
       mobileCurrentStep = step;
       
       if (step === phrases.length - 1) {
-        setTimeout(() => {
-          isSectionFixed = false;
-          unlockScroll();
-          aboutSection.style.position = '';
-          aboutSection.style.top = '';
-          aboutSection.style.left = '';
-          aboutSection.style.right = '';
-          aboutSection.style.zIndex = '';
-        }, 600);
+        // Unlock after the last card transition completes
+        const unlockDelay = 650;
+        window.setTimeout(() => {
+          unlockPageScroll();
+        }, unlockDelay);
       }
       
+      // Phrases are always rendered on mobile; only update active (red) phrase
       phrases.forEach((phrase, index) => {
-        if (index <= step) {
-          setTimeout(() => {
-            phrase.classList.add('mobile-visible');
-            // Remove active class from all, add only to current step
-            if (index === step) {
-              phrase.classList.add('mobile-active');
-            } else {
-              phrase.classList.remove('mobile-active');
-            }
-          }, index * 100);
+        if (index === step) {
+          phrase.classList.add('mobile-active');
         } else {
-          phrase.classList.remove('mobile-visible');
           phrase.classList.remove('mobile-active');
         }
       });
       
       descriptions.forEach((desc, index) => {
         if (index <= step) {
-          setTimeout(() => {
-            desc.classList.add('mobile-visible');
-            // Remove active class from all, add only to current step
-            if (index === step) {
-              desc.classList.add('mobile-active');
-            } else {
-              desc.classList.remove('mobile-active');
-            }
-          }, 200 + (index * 100));
+          // Keep cards and active phrase in sync (no JS delay)
+          desc.classList.add('mobile-visible');
+          if (index === step) {
+            desc.classList.add('mobile-active');
+          } else {
+            desc.classList.remove('mobile-active');
+          }
         } else {
           desc.classList.remove('mobile-visible');
           desc.classList.remove('mobile-active');
@@ -104,13 +105,13 @@
     }
 
     function handleTouchStart(e) {
-      if (!isSectionFixed) return;
+      if (!isLocked) return;
       touchStartY = e.touches[0].clientY;
       touchStartX = e.touches[0].clientX;
     }
 
     function handleTouchEnd(e) {
-      if (!isSectionFixed) return;
+      if (!isLocked) return;
       if (isAnimating) return;
       
       const touchEndY = e.changedTouches[0].clientY;
@@ -140,7 +141,7 @@
     }
 
     function preventScroll(e) {
-      if (isSectionFixed && mobileCurrentStep < phrases.length - 1) {
+      if (isLocked && mobileCurrentStep < phrases.length - 1) {
         e.preventDefault();
       }
     }
@@ -148,8 +149,8 @@
     window.addEventListener('scroll', checkSectionPosition, { passive: true });
     window.addEventListener('wheel', preventScroll, { passive: false });
     window.addEventListener('touchmove', preventScroll, { passive: false });
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchend', handleTouchEnd, { passive: false });
+    aboutSection.addEventListener('touchstart', handleTouchStart, { passive: true });
+    aboutSection.addEventListener('touchend', handleTouchEnd, { passive: false });
     showMobileStep(0);
     checkSectionPosition();
     
@@ -233,20 +234,8 @@
   function deactivatePhrase(index) {
     if (index < 0 || index >= phrases.length) return;
     
-    // Remove only the active class (red border)
+    // Remove only the active class (active highlight)
     phrases[index].classList.remove('active');
-    
-    const borderPath = phrases[index].querySelector('.about-border-path');
-    if (borderPath) {
-      const pathLength = borderPath.getTotalLength();
-      // Reset without animating (prevents "double"/"half" animations)
-      const prevTransition = borderPath.style.transition;
-      borderPath.style.transition = 'none';
-      borderPath.style.strokeDasharray = pathLength;
-      borderPath.style.strokeDashoffset = pathLength;
-      borderPath.getBoundingClientRect();
-      borderPath.style.transition = prevTransition;
-    }
     
     // Keep arrows and descriptions visible
   }
@@ -262,29 +251,11 @@
       deactivatePhrase(index - 1);
     }
     
-    const borderPath = phrases[index].querySelector('.about-border-path');
-    if (borderPath) {
-      // Calculate and set the path length BEFORE adding active class
-      const pathLength = borderPath.getTotalLength();
-      // Set initial (hidden) state WITHOUT animating
-      const prevTransition = borderPath.style.transition;
-      borderPath.style.transition = 'none';
-      borderPath.style.strokeDasharray = pathLength;
-      borderPath.style.strokeDashoffset = pathLength;
-      borderPath.getBoundingClientRect();
-      borderPath.style.transition = prevTransition;
-    }
-    
-    // Now add the active class and loaded class
+    // Highlight active phrase (text color via CSS)
     phrases[index].classList.add('active');
+
+    // Phrases are always rendered; ensure loaded is set once (no stagger)
     phrases[index].classList.add('loaded');
-    
-    // Trigger the animation by setting dashoffset to 0
-    if (borderPath) {
-      requestAnimationFrame(() => {
-        borderPath.style.strokeDashoffset = '0';
-      });
-    }
 
     const description = document.getElementById(`aboutDesc${index + 1}`);
     if (description) {
@@ -304,11 +275,9 @@
     hasAnimated = true;
     lockScroll();
 
-    // Initialize all phrases
-    phrases.forEach((phrase, index) => {
-      setTimeout(() => {
-        phrase.classList.add('loaded');
-      }, index * 200);
+    // Ensure phrases are rendered immediately (no appearance animation)
+    phrases.forEach((phrase) => {
+      phrase.classList.add('loaded');
     });
 
     // Activate each phrase sequentially with 2-second intervals
