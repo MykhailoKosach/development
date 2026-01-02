@@ -2417,9 +2417,10 @@ body {
 
 .advantages-image img {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
   object-fit: cover;
+  object-position: center;
 }
 
 .advantages-content {

@@ -11,14 +11,43 @@
 
   if (!gallery || !dots) return;
 
-  // Project-specific images (placeholder data)
-  const images = [
-    "https://picsum.photos/id/1011/1600/1000",
-    "https://picsum.photos/id/1015/1600/1000",
-    "https://picsum.photos/id/1018/1600/1000",
-    "https://picsum.photos/id/1025/1600/1000",
-    "https://picsum.photos/id/1035/1600/1000",
-    "https://picsum.photos/id/1040/1600/1000"
+  // Detect current warehouse from page URL
+  const currentPage = window.location.pathname.split('/').pop().replace('-en.html', '.html');
+  
+  // Project-specific images by warehouse
+  const imagesByWarehouse = {
+    'riasne.html': [
+      'assets/riasne.JPG',
+      'assets/riasne2.JPG',
+      'assets/riasne3.JPG',
+      'assets/riasne4.JPG',
+      'assets/riasne5.JPG',
+      'assets/riasne6.JPG'
+    ],
+    'pidryasne.html': [
+      'assets/pidriasne1.jpg',
+      'assets/pidriasne2.jpg',
+      'assets/pidriasne3.jpg'
+    ],
+    'zymna-voda.html': [
+      'assets/zymna1.JPG',
+      'assets/zymna2.JPG',
+      'assets/zymna3.JPG',
+      'assets/zymna4.JPG',
+      'assets/zymna5.JPG'
+    ],
+    'drohobych.html': [
+      'https://picsum.photos/id/1011/1600/1000',
+      'https://picsum.photos/id/1015/1600/1000',
+      'https://picsum.photos/id/1018/1600/1000'
+    ]
+  };
+  
+  // Get images for current warehouse, fallback to generic
+  const images = imagesByWarehouse[currentPage] || [
+    'https://picsum.photos/id/1011/1600/1000',
+    'https://picsum.photos/id/1015/1600/1000',
+    'https://picsum.photos/id/1018/1600/1000'
   ];
 
   // Build slides & dots

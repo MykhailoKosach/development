@@ -6,6 +6,29 @@
 (function () {
   const isMobile = window.innerWidth <= 968;
   
+  // Helper function to get page in correct language
+  function getPageInCurrentLanguage(basePage) {
+    const path = window.location.pathname;
+    const fileName = path.substring(path.lastIndexOf('/') + 1);
+    const isEnglish = fileName.endsWith('-en.html');
+    
+    // Remove any existing -en suffix first to get the base page
+    const cleanBasePage = basePage.replace('-en.html', '.html');
+    
+    if (isEnglish) {
+      return cleanBasePage.replace('.html', '-en.html');
+    }
+    return cleanBasePage;
+  }
+  
+  // Helper function to get warehouse name in current language
+  function getWarehouseName(nameUa, nameEn) {
+    const path = window.location.pathname;
+    const fileName = path.substring(path.lastIndexOf('/') + 1);
+    const isEnglish = fileName.endsWith('-en.html');
+    return isEnglish ? nameEn : nameUa;
+  }
+  
   // Mobile: Show static Lviv region map (same as desktop end state)
   if (isMobile) {
     mapboxgl.accessToken = "pk.eyJ1IjoibXlraGFpbG9rb3NhY2giLCJhIjoiY21pcTB3NHN6MDh4MTNlczh2bm9pdG1jdyJ9.JR_xYNvPBF70Gg5JF9ASTw";
@@ -36,7 +59,8 @@
           type: "Feature",
           geometry: { type: "Point", coordinates: [23.95, 49.89] },
           properties: { 
-            name: "Рясне",
+            nameUa: "Рясне",
+            nameEn: "Riasne",
             position: "right",
             link: "riasne.html"
           }
@@ -45,16 +69,18 @@
           type: "Feature",
           geometry: { type: "Point", coordinates: [23.84, 49.84] },
           properties: { 
-            name: "Підрясне",
+            nameUa: "Підрясне",
+            nameEn: "Pidryasne",
             position: "left",
-            link: "riasne.html"
+            link: "pidryasne.html"
           }
         },
         {
           type: "Feature",
           geometry: { type: "Point", coordinates: [23.8756375, 49.79] },
           properties: { 
-            name: "Зимна Вода",
+            nameUa: "Зимна Вода",
+            nameEn: "Zymna Voda",
             position: "right",
             link: "zymna-voda.html"
           }
@@ -63,9 +89,10 @@
           type: "Feature",
           geometry: { type: "Point", coordinates: [23.51006, 49.35316] },
           properties: { 
-            name: "Дрогобич",
+            nameUa: "Дрогобич",
+            nameEn: "Drohobych",
             position: "left",
-            link: "zymna-voda.html"
+            link: "drohobych.html"
           }
         }
       ]
@@ -114,14 +141,14 @@
       warehouses.features.forEach((feature) => {
         const label = document.createElement('div');
         label.className = `warehouse-label warehouse-label-${feature.properties.position}`;
-        label.textContent = feature.properties.name;
+        label.textContent = getWarehouseName(feature.properties.nameUa, feature.properties.nameEn);
         label.style.display = 'none';
         
         // Add click handler for navigation
         label.addEventListener('click', () => {
           const link = feature.properties.link;
           if (link) {
-            window.location.href = link;
+            window.location.href = getPageInCurrentLanguage(link);
           }
         });
         
@@ -206,7 +233,11 @@
     features: [
       {
         type: "Feature",
-        properties: { name: "Рясне", link: "riasne.html" },
+        properties: { 
+          nameUa: "Рясне",
+          nameEn: "Riasne",
+          link: "riasne.html" 
+        },
         geometry: {
           type: "Point",
           coordinates: [23.95, 49.89] // Further north-east
@@ -214,7 +245,11 @@
       },
       {
         type: "Feature",
-        properties: { name: "Підрясне", link: "riasne.html" },
+        properties: { 
+          nameUa: "Підрясне",
+          nameEn: "Pidryasne",
+          link: "pidryasne.html" 
+        },
         geometry: {
           type: "Point",
           coordinates: [23.84, 49.84] // Further south-west
@@ -222,7 +257,11 @@
       },
       {
         type: "Feature",
-        properties: { name: "Зимна Вода", link: "zymna-voda.html" },
+        properties: { 
+          nameUa: "Зимна Вода",
+          nameEn: "Zymna Voda",
+          link: "zymna-voda.html" 
+        },
         geometry: {
           type: "Point",
           coordinates: [23.8756375, 49.79] // Further south
@@ -230,7 +269,11 @@
       },
       {
         type: "Feature",
-        properties: { name: "Дрогобич", link: "zymna-voda.html" },
+        properties: { 
+          nameUa: "Дрогобич",
+          nameEn: "Drohobych",
+          link: "drohobych.html" 
+        },
         geometry: {
           type: "Point",
           coordinates: [23.51006, 49.35316]
@@ -245,7 +288,11 @@
     features: [
       {
         type: "Feature",
-        properties: { name: "Львів", size: "large" },
+        properties: { 
+          nameUa: "Львів",
+          nameEn: "Lviv",
+          size: "large" 
+        },
         geometry: {
           type: "Point",
           coordinates: [24.0316, 49.8419]
@@ -253,7 +300,11 @@
       },
       {
         type: "Feature",
-        properties: { name: "Рясне", size: "medium" },
+        properties: { 
+          nameUa: "Рясне",
+          nameEn: "Riasne",
+          size: "medium" 
+        },
         geometry: {
           type: "Point",
           coordinates: [23.9123375, 49.877912] // Moved slightly east and north
@@ -261,7 +312,11 @@
       },
       {
         type: "Feature",
-        properties: { name: "Підрясне", size: "medium" },
+        properties: { 
+          nameUa: "Підрясне",
+          nameEn: "Pidryasne",
+          size: "medium" 
+        },
         geometry: {
           type: "Point",
           coordinates: [23.874802, 49.8538035] // Moved west and south
@@ -269,7 +324,11 @@
       },
       {
         type: "Feature",
-        properties: { name: "Зимна Вода", size: "medium" },
+        properties: { 
+          nameUa: "Зимна Вода",
+          nameEn: "Zymna Voda",
+          size: "medium" 
+        },
         geometry: {
           type: "Point",
           coordinates: [23.8756375, 49.816705] // Moved slightly south
@@ -277,7 +336,11 @@
       },
       {
         type: "Feature",
-        properties: { name: "Дрогобич", size: "medium" },
+        properties: { 
+          nameUa: "Дрогобич",
+          nameEn: "Drohobych",
+          size: "medium" 
+        },
         geometry: {
           type: "Point",
           coordinates: [23.51006, 49.35316]
@@ -339,7 +402,7 @@
       const feature = e.features[0];
       const link = feature.properties.link;
       if (link) {
-        window.location.href = link;
+        window.location.href = getPageInCurrentLanguage(link);
       }
     });
 
@@ -356,10 +419,10 @@
     
     warehouses.features.forEach((feature) => {
       const coords = feature.geometry.coordinates;
-      const name = feature.properties.name;
+      const name = getWarehouseName(feature.properties.nameUa, feature.properties.nameEn);
       
-      // Determine label position based on warehouse name
-      const isLeftSide = name === "Підрясне" || name === "Дрогобич";
+      // Determine label position based on warehouse name (use Ukrainian for consistency)
+      const isLeftSide = feature.properties.nameUa === "Підрясне" || feature.properties.nameUa === "Дрогобич";
       
       // Create label element
       const label = document.createElement('div');
@@ -373,7 +436,7 @@
       // Add click handler
       label.addEventListener('click', () => {
         if (feature.properties.link) {
-          window.location.href = feature.properties.link;
+          window.location.href = getPageInCurrentLanguage(feature.properties.link);
         }
       });
       
@@ -475,7 +538,7 @@
               const feature = e.features[0];
               const link = feature.properties.link;
               if (link) {
-                window.location.href = link;
+                window.location.href = getPageInCurrentLanguage(link);
               }
             });
 
