@@ -23,7 +23,7 @@
       type: "Сухий, виробничий",
       cls: "A",
       location: "Промислова зона Підрясне",
-      link: "pidriasne.html"
+      link: "pidryasne.html"
     },
     {
       img: "assets/ryasne-main.jpg",
@@ -43,7 +43,7 @@
       type: "Складський, промисловий",
       cls: "—",
       location: "Дрогобич",
-      link: "#"
+      link: "drohobych.html"
     }
   ];
 
