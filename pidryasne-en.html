@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pidryasne — ProTec Development</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="project-body-page">
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index-en.html" aria-label="Home">
+        <img src="assets/logo.svg" alt="ProTec Development" />
+      </a>
+
+      <div class="header-right">
+        <!-- TOP ROW: phone + language (desktop only) -->
+        <div class="header-top-row">
+          <a class="header-phone" href="tel:+380004882891">
+            +380 00 488 2891
+          </a>
+
+          <div class="lang-toggle" aria-label="Change language">
+            <button type="button" class="lang-btn" data-lang="ua">UA</button>
+            <button type="button" class="lang-btn active" data-lang="en">EN</button>
+          </div>
+        </div>
+
+        <!-- BOTTOM ROW: nav + burger -->
+        <div class="header-bottom-row">
+          <nav class="main-nav">
+            <a href="index-en.html#why">Why Us</a>
+            <a href="index-en.html#services">Services</a>
+            <div class="has-dropdown">
+              <a href="index-en.html#projects">Our Projects</a>
+              <div class="nav-dropdown" role="menu" aria-label="Projects">
+                <a role="menuitem" href="riasne-en.html">Riasne</a>
+                <a role="menuitem" href="pidryasne-en.html">Pidryasne</a>
+                <a role="menuitem" href="zymna-voda-en.html">Zymna Voda</a>
+                <a role="menuitem" href="drohobych-en.html">Drohobych</a>
+              </div>
+            </div>
+            <a href="index-en.html#about">About</a>
+            <a href="index-en.html#contacts">Contacts</a>
+          </nav>
+
+          <button class="burger" id="burgerBtn" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-links">
+        <a href="index-en.html#why">Why Us</a>
+        <a href="index-en.html#services">Services</a>
+        <a href="index-en.html#projects">Our Projects</a>
+        <a href="index-en.html#about">About</a>
+        <a href="index-en.html#contacts">Contacts</a>
+      </div>
+
+      <div class="mobile-nav-header">
+        <a class="header-phone" href="tel:+380004882891">
+          +380 00 488 2891
+        </a>
+
+        <div class="lang-toggle" aria-label="Change language">
+          <button type="button" class="lang-btn" data-lang="ua">UA</button>
+          <button type="button" class="lang-btn active" data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Drawer backdrop for mobile nav -->
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+
+  <main class="project-main">
+    <section class="project-hero">
+      <div class="project-hero-image" style="background-image: url('assets/pidryasne-main.jpg');"></div>
+      <div class="project-hero-overlay"></div>
+      <div class="container project-hero-content">
+        <h1>Pidryasne</h1>
+        <p>Located in an industrial zone with developed transport infrastructure and convenient access roads for passenger and large-sized transport.</p>
+        <ul class="project-badges">
+          <li>41,000 m²</li>
+          <li>Type: dry, production</li>
+          <li>Class: A</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section project-details-section">
+      <div class="container project-details-container">
+        <div class="project-text">
+          <h2>Technical Specifications</h2>
+          <ul class="project-list">
+            <li>Dry warehouse area – 35,000 m² (temperature range from +15 to +24 °C)</li>
+            <li>Office space area – 5,000 m²</li>
+            <li>Utility rooms area – up to 1,000 m²</li>
+            <li>Own solid fuel boiler house – 1.6 MW</li>
+            <li>Power supply – 1,500 kW</li>
+            <li>Backup power supply – 2 diesel generators of 250 kW each</li>
+            <li>Water supply – city systems (133 m³/day)</li>
+            <li>Sewerage – pumping station</li>
+            <li>Energy-saving electric lighting</li>
+            <li>Equipped with ventilation system</li>
+            <li>Equipped with fire safety systems</li>
+            <li>Equipped with compressed air system</li>
+            <li>4 sectional gates with dock levelers (possibility of installation up to 12)</li>
+          </ul>
+
+          <h2>Security and Infrastructure</h2>
+          <ul class="project-list">
+            <li>24/7 security with video surveillance</li>
+            <li>Access control system</li>
+            <li>Convenient access roads</li>
+            <li>Parking area for passenger and large-sized transport</li>
+          </ul>
+        </div>
+
+        <div class="project-gallery-wrap">
+          <div class="project-gallery" id="projectGallery"></div>
+          <div class="gallery-navigation">
+            <button class="gallery-arrow prev" aria-label="Previous photo"></button>
+            <div class="gallery-dots" id="galleryDots"></div>
+            <button class="gallery-arrow next" aria-label="Next photo"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section project-advantages-bottom">
+      <div class="container">
+        <div class="advantages-image">
+          <img src="assets/pidryasne-main.jpg" alt="Pidryasne" />
+        </div>
+        <div class="advantages-content">
+          <h3>Facility Advantages</h3>
+          <p>
+            Pidryasne warehouse complex is a modern Class A facility retrofitted for production needs. The combination of large areas, backup power systems and specialized equipment creates efficient conditions for storage, logistics and production.
+          </p>
+          <div class="advantages-nav">
+            <a href="riasne-en.html" class="btn btn-outline">← Back</a>
+            <a href="zymna-voda-en.html" class="btn">Forward →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> ProTec Development</span>
+    </div>
+  </footer>
+  <script src="js/utilities.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/lang-toggle.js"></script>
+  <script src="js/project-page-gallery.js"></script>
+</body>
+</html>

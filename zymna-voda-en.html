@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zymna Voda — ProTec Development</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="project-body-page">
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index-en.html" aria-label="Home">
+        <img src="assets/logo.svg" alt="ProTec Development" />
+      </a>
+
+      <div class="header-right">
+        <!-- TOP ROW: phone + language (desktop only) -->
+        <div class="header-top-row">
+          <a class="header-phone" href="tel:+380004882891">
+            +380 00 488 2891
+          </a>
+
+          <div class="lang-toggle" aria-label="Change language">
+            <button type="button" class="lang-btn" data-lang="ua">UA</button>
+            <button type="button" class="lang-btn active" data-lang="en">EN</button>
+          </div>
+        </div>
+
+        <!-- BOTTOM ROW: nav + burger -->
+        <div class="header-bottom-row">
+          <nav class="main-nav">
+            <a href="index-en.html#why">Why Us</a>
+            <a href="index-en.html#services">Services</a>
+            <div class="has-dropdown">
+              <a href="index-en.html#projects">Our Projects</a>
+              <div class="nav-dropdown" role="menu" aria-label="Projects">
+                <a role="menuitem" href="riasne-en.html">Riasne</a>
+                <a role="menuitem" href="pidryasne-en.html">Pidryasne</a>
+                <a role="menuitem" href="zymna-voda-en.html">Zymna Voda</a>
+                <a role="menuitem" href="drohobych-en.html">Drohobych</a>
+              </div>
+            </div>
+            <a href="index-en.html#about">About</a>
+            <a href="index-en.html#contacts">Contacts</a>
+          </nav>
+
+          <button class="burger" id="burgerBtn" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-links">
+        <a href="index-en.html#why">Why Us</a>
+        <a href="index-en.html#services">Services</a>
+        <a href="index-en.html#projects">Our Projects</a>
+        <a href="index-en.html#about">About</a>
+        <a href="index-en.html#contacts">Contacts</a>
+      </div>
+
+      <div class="mobile-nav-header">
+        <a class="header-phone" href="tel:+380004882891">
+          +380 00 488 2891
+        </a>
+
+        <div class="lang-toggle" aria-label="Change language">
+          <button type="button" class="lang-btn" data-lang="ua">UA</button>
+          <button type="button" class="lang-btn active" data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Drawer backdrop for mobile nav -->
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+
+  <main class="project-main">
+    <section class="project-hero">
+      <div class="project-hero-image" style="background-image: url('https://picsum.photos/id/1011/1600/900');"></div>
+      <div class="project-hero-overlay"></div>
+      <div class="container project-hero-content">
+        <h1>Zymna Voda</h1>
+        <p>Located at the intersection of two main roads of international communication Lviv-Shehyni and Lviv-Krakovets and directly on the Lviv Ring Road, which is part of the M-06 Kyiv-Chop highway.</p>
+        <ul class="project-badges">
+          <li>116,000 m²</li>
+          <li>Type: dry, refrigerated</li>
+          <li>Class: A+</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section project-details-section">
+      <div class="container project-details-container">
+        <div class="project-text">
+          <h2>Technical Specifications</h2>
+          <ul class="project-list">
+            <li>Dry warehouse area: 42,000 m² (temperature range from +15 to +24 °C)</li>
+            <li>Refrigerated warehouse area: 21,000 m² (temperature range -2…+10 °C; -18…-22 °C)</li>
+            <li>Office and utility rooms area: 10,000 m²</li>
+            <li>Working height of warehouse: 12.5 m</li>
+            <li>Rack storage of goods up to 12 m height</li>
+            <li>Column spacing: 12 × 24 m</li>
+            <li>Power supply: 2nd category, 5.5 MW</li>
+            <li>2 diesel generators for backup power supply of 250 kVA each</li>
+            <li>Solid fuel boiler house 3.8 MW</li>
+            <li>Water supply: 400 m³/day</li>
+          </ul>
+        </div>
+
+        <div class="project-gallery-wrap">
+          <div class="project-gallery" id="projectGallery"></div>
+          <div class="gallery-navigation">
+            <button class="gallery-arrow prev" aria-label="Previous photo"></button>
+            <div class="gallery-dots" id="galleryDots"></div>
+            <button class="gallery-arrow next" aria-label="Next photo"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section project-advantages-bottom">
+      <div class="container">
+        <div class="advantages-image">
+          <img src="https://picsum.photos/id/1011/1600/600" alt="Warehouse interior" />
+        </div>
+        <div class="advantages-content">
+          <p>
+            An extremely important advantage of the complex is its location at the intersection of main roads of international communication and on the Lviv Ring Road. After the completion of the construction of the Northern Bypass of Lviv, the complex will become part of the transnational GO Highway corridor, which connects Ukrainian Black Sea ports with Polish Baltic Sea ports.
+          </p>
+          <div class="advantages-nav">
+            <a href="pidryasne-en.html" class="btn btn-outline">← Back</a>
+            <a href="drohobych-en.html" class="btn">Forward →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> ProTec Development</span>
+    </div>
+  </footer>
+  <script src="js/utilities.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/lang-toggle.js"></script>
+  <script src="js/project-page-gallery.js"></script>
+</body>
+</html>

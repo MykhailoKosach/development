@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Riasne — ProTec Development</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="project-body-page">
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index-en.html" aria-label="Home">
+        <img src="assets/logo.svg" alt="ProTec Development" />
+      </a>
+
+      <div class="header-right">
+        <!-- TOP ROW: phone + language (desktop only) -->
+        <div class="header-top-row">
+          <a class="header-phone" href="tel:+380004882891">
+            +380 00 488 2891
+          </a>
+
+          <div class="lang-toggle" aria-label="Change language">
+            <button type="button" class="lang-btn" data-lang="ua">UA</button>
+            <button type="button" class="lang-btn active" data-lang="en">EN</button>
+          </div>
+        </div>
+
+        <!-- BOTTOM ROW: nav + burger -->
+        <div class="header-bottom-row">
+          <nav class="main-nav">
+            <a href="index-en.html#why">Why Us</a>
+            <a href="index-en.html#services">Services</a>
+            <div class="has-dropdown">
+              <a href="index-en.html#projects">Our Projects</a>
+              <div class="nav-dropdown" role="menu" aria-label="Projects">
+                <a role="menuitem" href="riasne-en.html">Riasne</a>
+                <a role="menuitem" href="pidryasne-en.html">Pidryasne</a>
+                <a role="menuitem" href="zymna-voda-en.html">Zymna Voda</a>
+                <a role="menuitem" href="drohobych-en.html">Drohobych</a>
+              </div>
+            </div>
+            <a href="index-en.html#about">About</a>
+            <a href="index-en.html#contacts">Contacts</a>
+          </nav>
+
+          <button class="burger" id="burgerBtn" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-links">
+        <a href="index-en.html#why">Why Us</a>
+        <a href="index-en.html#services">Services</a>
+        <a href="index-en.html#projects">Our Projects</a>
+        <a href="index-en.html#about">About</a>
+        <a href="index-en.html#contacts">Contacts</a>
+      </div>
+
+      <div class="mobile-nav-header">
+        <a class="header-phone" href="tel:+380004882891">
+          +380 00 488 2891
+        </a>
+
+        <div class="lang-toggle" aria-label="Change language">
+          <button type="button" class="lang-btn" data-lang="ua">UA</button>
+          <button type="button" class="lang-btn active" data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Drawer backdrop for mobile nav -->
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+
+  <main class="project-main">
+    <section class="project-hero">
+      <div class="project-hero-image" style="background-image: url('https://picsum.photos/id/1005/1600/900');"></div>
+      <div class="project-hero-overlay"></div>
+      <div class="container project-hero-content">
+        <h1>Riasne</h1>
+        <p>The complex is located on a 1.79 hectare plot and combines modern technical solutions with well-planned infrastructure.</p>
+        <ul class="project-badges">
+          <li>7,235.6 m²</li>
+          <li>Type: dry, refrigerated</li>
+          <li>Class: B+</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section project-details-section">
+      <div class="container project-details-container">
+        <div class="project-text">
+          <h2>Technical Specifications</h2>
+          <ul class="project-list">
+            <li>Working height of warehouses – from 8.8 m to 10 m</li>
+            <li>Rack storage of goods – up to 8.8 m</li>
+            <li>4 sectional gates with dock levelers</li>
+            <li>Own gas boiler house with capacity of 2,376 kW</li>
+            <li>Power supply – 550 kW</li>
+            <li>Artesian well</li>
+            <li>Water supply and sewerage – city systems</li>
+            <li>Energy-saving lighting system</li>
+            <li>Air conditioning of office premises</li>
+            <li>Internal fire water supply and smoke removal system</li>
+            <li>Specialized room for charging stackers</li>
+          </ul>
+
+          <h2>Security and Convenience</h2>
+          <ul class="project-list">
+            <li>24/7 security with video surveillance and access control system</li>
+            <li>Isolated premises for independence from other tenants</li>
+            <li>Availability of zero ramp</li>
+            <li>Spacious parking for 120 vehicles (50 – cars, 70 – trucks)</li>
+            <li>Convenient access roads</li>
+          </ul>
+        </div>
+
+        <div class="project-gallery-wrap">
+          <div class="project-gallery" id="projectGallery"></div>
+          <div class="gallery-navigation">
+            <button class="gallery-arrow prev" aria-label="Previous photo"></button>
+            <div class="gallery-dots" id="galleryDots"></div>
+            <button class="gallery-arrow next" aria-label="Next photo"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section project-advantages-bottom">
+      <div class="container">
+        <div class="advantages-image">
+          <img src="https://picsum.photos/id/1005/1600/600" alt="Warehouse interior" />
+        </div>
+        <div class="advantages-content">
+          <p>
+            An extremely important advantage of the complex is its location at the intersection of two main roads of international communication Lviv-Shehyni and Lviv-Krakovets and directly on the Lviv Ring Road, which is part of the M-06 Kyiv-Chop highway.
+          </p>
+          <p>
+            After the completion of the planned construction of the Northern Bypass of Lviv, it will become part of the transnational GO Highway corridor, which connects Ukrainian Black Sea ports with Polish Baltic Sea ports in Gdansk and Gdynia.
+          </p>
+          <div class="advantages-nav">
+            <a href="drohobych-en.html" class="btn btn-outline">← Back</a>
+            <a href="pidryasne-en.html" class="btn">Forward →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="year"></span> ProTec Development</span>
+    </div>
+  </footer>
+  <script src="js/utilities.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/lang-toggle.js"></script>
+  <script src="js/project-page-gallery.js"></script>
+</body>
+</html>
