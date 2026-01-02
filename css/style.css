@@ -811,7 +811,6 @@ a {
   background: rgba(214, 40, 40, 0.16);
   color: var(--accent-soft);
   font-size: 0.8rem;
-  margin-bottom: 8px;
 }
 
 /* SERVICES TIMELINE */
@@ -1342,8 +1341,8 @@ a {
 }
 
 .why-icon {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 999px;
   display: flex;
   align-items: center;
@@ -1426,7 +1425,7 @@ a {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   gap: 40px;
-  align-items: stretch;
+  align-items: flex-start;
 }
 
 .contact-list {
