@@ -11,6 +11,7 @@
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 10px;
+  --header-h: 72px;
 }
 
 /* GLOBAL */
@@ -57,7 +58,7 @@ a {
 .site-header {
   position: fixed;
   inset: 0 0 auto 0;
-  height: 72px;
+  height: var(--header-h);
   display: flex;
   align-items: center;
   z-index: 1000;
@@ -90,6 +91,53 @@ a {
   display: flex;
   gap: 24px;
   font-size: 0.92rem;
+}
+
+.main-nav .has-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.main-nav .nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 200px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-md);
+  padding: 8px;
+  z-index: 1100;
+}
+
+/* Bridge the hover gap between the trigger and the dropdown */
+.main-nav .nav-dropdown::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10px;
+  height: 10px;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.main-nav .has-dropdown:hover .nav-dropdown,
+.main-nav .has-dropdown:focus-within .nav-dropdown {
+  display: block;
+}
+
+.main-nav .nav-dropdown a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.main-nav .nav-dropdown a:hover {
+  background: #f9fafb;
 }
 
 .main-nav a {
@@ -336,7 +384,7 @@ a {
 .hero {
   position: relative;
   min-height: 92vh;
-  padding-top: 72px;
+  padding-top: var(--header-h);
   display: flex;
   align-items: stretch;
   overflow: hidden;
@@ -1807,18 +1855,19 @@ body {
   position: relative;
   min-height: 100vh;
   background: #ffffff;
-  padding: 100px 0;
+  /* Override `.section` padding: this block is a full-screen scroller */
+  padding: var(--header-h) 0 0;
 }
 
 .about-scroller-container {
   position: relative;
-  height: 100vh;
+  height: calc(100vh - var(--header-h));
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   text-align: center;
-  padding: 80px 16px;
+  padding: 16px;
   overflow: hidden;
 }
 
@@ -1841,7 +1890,7 @@ body {
 
 /* Active phrase highlight (desktop) */
 .about-phrase.active {
-  color: var(--accent);
+  color: inherit;
 }
 
 .about-phrase.loaded {
@@ -1859,9 +1908,8 @@ body {
   transition: opacity 0.3s ease;
 }
 
-/* Border is no longer used as the active indicator */
 .about-phrase.active .about-border-svg {
-  opacity: 0;
+  opacity: 1;
 }
 
 .about-border-path {
@@ -1870,14 +1918,8 @@ body {
   stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
   transition: stroke-dashoffset 1s ease;
   will-change: stroke-dashoffset;
-}
-
-.about-phrase.active .about-border-path {
-  stroke-dashoffset: 1000;
 }
 
 /* Arrow paths */
@@ -1944,13 +1986,13 @@ body {
 @media (max-width: 720px) {
   #about {
     min-height: 100vh;
-    padding: 0;
+    padding: var(--header-h) 0 0;
   }
 
   .about-scroller-container {
     position: relative;
-    height: 100vh;
-    padding: 100px 20px 120px;
+    height: calc(100vh - var(--header-h));
+    padding: 20px 20px 40px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -2064,7 +2106,6 @@ body {
 
 .btn {
   background: linear-gradient(90deg, var(--accent), var(--accent-soft));
-  box-shadow: 0 10px 24px rgba(227, 34, 37, 0.35);
 }
 
 

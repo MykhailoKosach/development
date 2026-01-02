@@ -16,9 +16,9 @@
   <!-- HEADER -->
   <header class="site-header">
   <div class="container header-inner">
-    <div class="logo">
+    <a class="logo" href="index.html" aria-label="Home">
       <img src="assets/logo.svg" alt="ProTec Development" />
-    </div>
+    </a>
 
     <div class="header-right">
       <!-- TOP ROW: phone + language (desktop only) -->
@@ -38,7 +38,13 @@
         <nav class="main-nav">
         <a href="#why">Чому ми</a>
         <a href="#services">Послуги</a>
-        <a href="#projects">Наші проєкти</a>
+        <div class="has-dropdown">
+          <a href="#projects">Наші проєкти</a>
+          <div class="nav-dropdown" role="menu" aria-label="Проєкти">
+            <a role="menuitem" href="riasne.html">Рясне</a>
+            <a role="menuitem" href="zymna-voda.html">Зимна Вода</a>
+          </div>
+        </div>
         <a href="#about">Про нас</a>
         <a href="#contacts">Контакти</a>
         </nav>
@@ -97,7 +103,7 @@
               <span class="hero-stat-label">Локації</span>
             </div>
             <div class="hero-stat">
-              <span class="hero-stat-number">15,000+</span>
+              <span class="hero-stat-number">200 000+</span>
               <span class="hero-stat-label">м² площі</span>
             </div>
           </div>
@@ -117,7 +123,7 @@
                 <span class="hero-stat-label">Локації</span>
               </div>
               <div class="hero-stat">
-                <span class="hero-stat-number">15 000+</span>
+                <span class="hero-stat-number">200 000+</span>
                 <span class="hero-stat-label">м² площі</span>
               </div>
             </div>

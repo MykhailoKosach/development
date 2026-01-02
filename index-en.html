@@ -16,9 +16,9 @@
   <!-- HEADER -->
   <header class="site-header">
   <div class="container header-inner">
-    <div class="logo">
+    <a class="logo" href="index.html" aria-label="Home">
       <img src="assets/logo.svg" alt="ProTec Development" />
-    </div>
+    </a>
 
     <div class="header-right">
       <!-- TOP ROW: phone + language (desktop only) -->
@@ -38,7 +38,13 @@
         <nav class="main-nav">
             <a href="#why">Why Us</a>
             <a href="#services">Services</a>
-            <a href="#projects">Our Projects</a>
+            <div class="has-dropdown">
+              <a href="#projects">Our Projects</a>
+              <div class="nav-dropdown" role="menu" aria-label="Projects">
+                <a role="menuitem" href="riasne.html">Riasne</a>
+                <a role="menuitem" href="zymna-voda.html">Zymna Voda</a>
+              </div>
+            </div>
             <a href="#about">About Us</a>
             <a href="#contacts">Contacts</a>
         </nav>
@@ -97,7 +103,7 @@
               <span class="hero-stat-label">Locations</span>
             </div>
             <div class="hero-stat">
-              <span class="hero-stat-number">15,000+</span>
+              <span class="hero-stat-number">200000+</span>
               <span class="hero-stat-label">m² of space</span>
             </div>
           </div>
@@ -117,7 +123,7 @@
                 <span class="hero-stat-label">Locations</span>
               </div>
               <div class="hero-stat">
-                <span class="hero-stat-number">15,000+</span>
+                <span class="hero-stat-number">200 000+</span>
                 <span class="hero-stat-label">m² of space</span>
               </div>
             </div>

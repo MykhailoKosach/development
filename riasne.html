@@ -7,15 +7,76 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="project-body-page">
+  <!-- HEADER -->
   <header class="site-header">
     <div class="container header-inner">
-      <a href="index.html" class="logo">ProTec <span>Development</span></a>
-      <nav class="main-nav">
-        <a href="index.html#projects">Наші проєкти</a>
-        <a href="index.html#contacts">Контакти</a>
-      </nav>
+      <a class="logo" href="index.html" aria-label="Home">
+        <img src="assets/logo.svg" alt="ProTec Development" />
+      </a>
+
+      <div class="header-right">
+        <!-- TOP ROW: phone + language (desktop only) -->
+        <div class="header-top-row">
+          <a class="header-phone" href="tel:+380004882891">
+            +380 00 488 2891
+          </a>
+
+          <div class="lang-toggle" aria-label="Change language">
+            <button type="button" class="lang-btn active" data-lang="ua">UA</button>
+            <button type="button" class="lang-btn" data-lang="en">EN</button>
+          </div>
+        </div>
+
+        <!-- BOTTOM ROW: nav + burger -->
+        <div class="header-bottom-row">
+          <nav class="main-nav">
+            <a href="index.html#why">Чому ми</a>
+            <a href="index.html#services">Послуги</a>
+            <div class="has-dropdown">
+              <a href="index.html#projects">Наші проєкти</a>
+              <div class="nav-dropdown" role="menu" aria-label="Проєкти">
+                <a role="menuitem" href="riasne.html">Рясне</a>
+                <a role="menuitem" href="zymna-voda.html">Зимна Вода</a>
+              </div>
+            </div>
+            <a href="index.html#about">Про нас</a>
+            <a href="index.html#contacts">Контакти</a>
+          </nav>
+
+          <button class="burger" id="burgerBtn" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
     </div>
   </header>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-inner">
+      <div class="mobile-nav-links">
+        <a href="index.html#why">Чому ми</a>
+        <a href="index.html#services">Послуги</a>
+        <a href="index.html#projects">Наші проєкти</a>
+        <a href="index.html#about">Про нас</a>
+        <a href="index.html#contacts">Контакти</a>
+      </div>
+
+      <div class="mobile-nav-header">
+        <a class="header-phone" href="tel:+380004882891">
+          +380 00 488 2891
+        </a>
+
+        <div class="lang-toggle" aria-label="Change language">
+          <button type="button" class="lang-btn active" data-lang="ua">UA</button>
+          <button type="button" class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Drawer backdrop for mobile nav -->
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
 
   <main class="project-main">
     <section class="project-hero">
@@ -98,6 +159,7 @@
     </div>
   </footer>
   <script src="js/utilities.js"></script>
+  <script src="js/navigation.js"></script>
   <script src="js/project-page-gallery.js"></script>
 </body>
 </html>

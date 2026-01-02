@@ -11,6 +11,21 @@
   const phrases = aboutSection.querySelectorAll('.about-phrase');
   const descriptions = aboutSection.querySelectorAll('.about-desc');
   const container = aboutSection.querySelector('.about-scroller-container');
+
+  function getHeaderHeight() {
+    const headerEl = document.querySelector('.site-header');
+    return headerEl ? headerEl.getBoundingClientRect().height : 0;
+  }
+
+  function syncHeaderCssVar() {
+    const headerHeight = getHeaderHeight();
+    if (headerHeight > 0) {
+      document.documentElement.style.setProperty('--header-h', `${Math.round(headerHeight)}px`);
+    }
+  }
+
+  syncHeaderCssVar();
+  window.addEventListener('resize', syncHeaderCssVar, { passive: true });
   
   const isMobile = window.innerWidth <= 720;
 
@@ -43,27 +58,26 @@
 
     function checkSectionPosition() {
       if (isLocked) return;
-      const headerEl = document.querySelector('.site-header');
-      const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 0;
-
-      // Lock when the mission text (phrases) hits the very top under the header
-      const anchorEl = aboutSection.querySelector('.about-mission-text') || phrases[0] || aboutSection;
-      const anchorRect = anchorEl.getBoundingClientRect();
-      const lockY = headerHeight;
+      const headerHeight = getHeaderHeight();
+      const scrollerEl = container || aboutSection;
+      const rect = scrollerEl.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
 
       if (mobileCurrentStep >= phrases.length - 1) return;
 
-      // Only lock when the anchor crosses the header line
-      if (anchorRect.top <= lockY && anchorRect.bottom >= lockY) {
-        const delta = anchorRect.top - lockY;
+      // Lock only when the full-screen scroller fits the viewport under the fixed header.
+      // If close, snap-align scroller top to the header line, then lock.
+      const snapTolerance = 140;
+      const fitsTop = Math.abs(rect.top - headerHeight) <= snapTolerance;
+      const fitsBottom = Math.abs(rect.bottom - viewportHeight) <= snapTolerance;
+      if (!fitsTop || !fitsBottom) return;
 
-        // Snap-align to remove the white gap (section padding) before locking
-        if (Math.abs(delta) <= 120) {
-          window.scrollBy(0, delta);
-        }
-
-        lockPageScroll();
+      const delta = rect.top - headerHeight;
+      if (Math.abs(delta) <= snapTolerance) {
+        window.scrollBy(0, delta);
       }
+
+      lockPageScroll();
     }
 
     function showMobileStep(step) {
@@ -161,7 +175,59 @@
   let hasAnimated = false;
   let animationInProgress = false;
   let scrollLocked = false;
-  let sectionCentered = false;
+  let sectionFitted = false;
+
+  function computeBorderLength(borderRectEl) {
+    // SVGRectElement supports getTotalLength in modern browsers, but fall back to bbox perimeter.
+    try {
+      if (typeof borderRectEl.getTotalLength === 'function') {
+        const len = borderRectEl.getTotalLength();
+        if (Number.isFinite(len) && len > 0) return len;
+      }
+    } catch (_) {
+      // ignore
+    }
+
+    try {
+      const bbox = borderRectEl.getBBox();
+      const w = bbox?.width || 0;
+      const h = bbox?.height || 0;
+      const len = 2 * (w + h);
+      if (Number.isFinite(len) && len > 0) return len;
+    } catch (_) {
+      // ignore
+    }
+
+    return 1000;
+  }
+
+  function resetBorderAnimation(phraseEl) {
+    const borderRectEl = phraseEl?.querySelector('.about-border-path');
+    if (!borderRectEl) return;
+
+    const len = borderRectEl.dataset.borderLen
+      ? Number(borderRectEl.dataset.borderLen)
+      : computeBorderLength(borderRectEl);
+    borderRectEl.dataset.borderLen = String(len);
+
+    // Prevent the "double draw" effect by disabling transition during reset.
+    borderRectEl.style.transition = 'none';
+    borderRectEl.style.strokeDasharray = String(len);
+    borderRectEl.style.strokeDashoffset = String(len);
+    // Force style flush
+    void borderRectEl.getBoundingClientRect();
+    borderRectEl.style.transition = '';
+  }
+
+  function playBorderAnimation(phraseEl) {
+    const borderRectEl = phraseEl?.querySelector('.about-border-path');
+    if (!borderRectEl) return;
+
+    resetBorderAnimation(phraseEl);
+    requestAnimationFrame(() => {
+      borderRectEl.style.strokeDashoffset = '0';
+    });
+  }
 
   function lockScroll() {
     if (!scrollLocked) {
@@ -177,14 +243,32 @@
     }
   }
 
-  function isSectionCentered() {
-    const rect = aboutSection.getBoundingClientRect();
+  function isScrollerFittedToViewport() {
+    const headerHeight = getHeaderHeight();
+    const scrollerEl = container || aboutSection;
+    const rect = scrollerEl.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-    const sectionCenter = rect.top + (rect.height / 2);
-    const viewportCenter = viewportHeight / 2;
-    
-    // Check if section center is within 100px of viewport center
-    return Math.abs(sectionCenter - viewportCenter) < 100;
+    const tolerance = 100;
+    return Math.abs(rect.top - headerHeight) < tolerance && Math.abs(rect.bottom - viewportHeight) < tolerance;
+  }
+
+  function snapScrollerToHeaderIfClose() {
+    const headerHeight = getHeaderHeight();
+    const scrollerEl = container || aboutSection;
+    const rect = scrollerEl.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+
+    const snapTolerance = 140;
+    const fitsBottom = Math.abs(rect.bottom - viewportHeight) <= snapTolerance;
+    if (!fitsBottom) return false;
+
+    const delta = rect.top - headerHeight;
+    if (Math.abs(delta) <= snapTolerance) {
+      window.scrollBy(0, delta);
+      return true;
+    }
+
+    return false;
   }
 
   function drawArrow(index) {
@@ -236,6 +320,9 @@
     
     // Remove only the active class (active highlight)
     phrases[index].classList.remove('active');
+
+    // Reset border so next activation draws cleanly
+    resetBorderAnimation(phrases[index]);
     
     // Keep arrows and descriptions visible
   }
@@ -253,6 +340,9 @@
     
     // Highlight active phrase (text color via CSS)
     phrases[index].classList.add('active');
+
+    // Re-run border draw animation on each activation
+    playBorderAnimation(phrases[index]);
 
     // Phrases are always rendered; ensure loaded is set once (no stagger)
     phrases[index].classList.add('loaded');
@@ -278,6 +368,8 @@
     // Ensure phrases are rendered immediately (no appearance animation)
     phrases.forEach((phrase) => {
       phrase.classList.add('loaded');
+      // Prepare border dash state so first activation animates properly
+      resetBorderAnimation(phrase);
     });
 
     // Activate each phrase sequentially with 2-second intervals
@@ -298,7 +390,7 @@
     });
   }
 
-  function checkIfCentered() {
+  function checkIfReady() {
     if (hasAnimated || animationInProgress) return;
     
     const rect = aboutSection.getBoundingClientRect();
@@ -307,17 +399,21 @@
     // Check if section is visible at all
     if (rect.top > viewportHeight || rect.bottom < 0) return;
     
-    // Check if section is centered
-    if (isSectionCentered() && !sectionCentered) {
-      sectionCentered = true;
-      runAutoAnimation();
+    // Start only when the full-screen scroller fits the viewport (under header).
+    // If it's close, snap-align first so the content is vertically centered while locked.
+    if (!sectionFitted) {
+      snapScrollerToHeaderIfClose();
+      if (isScrollerFittedToViewport()) {
+        sectionFitted = true;
+        runAutoAnimation();
+      }
     }
   }
 
-  window.addEventListener('scroll', checkIfCentered, { passive: true });
+  window.addEventListener('scroll', checkIfReady, { passive: true });
   
   // Check on load in case section is already centered
-  checkIfCentered();
+  checkIfReady();
   
   window.addEventListener('resize', () => {
     // Redraw all visible arrows on resize
